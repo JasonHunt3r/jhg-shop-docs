@@ -257,7 +257,7 @@ def rotate_closed_path(pts, start_idx):
 
 Apply this to all path variants (rough, penult, finish) using each variant's own closest-point-to-plunge index. The rotation must happen after offset computation but before arc fitting.
 
-**See also:** G2/G3 ARC COMMANDS -- the arc fitter assumes index 0 is the start point; this rule ensures that assumption is always satisfied.
+**See also:** [G2/G3 ARC COMMANDS](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_gcode_hygiene_1_7.md) -- the arc fitter assumes index 0 is the start point; this rule ensures that assumption is always satisfied.
 
 **Example failure:** Panel C body outline -- the SVG path's M command started near the bottom of the body, but the plunge point was near the top. The first cutting move after plunge was a straight line across the entire body interior (~400mm) to reach where the arc-fitted command list thought it was starting.
 
@@ -317,7 +317,7 @@ Every generated NC file must begin with this header before the modal setup block
 ## PIPELINE DEFAULTS
 
 - Always generate a verification SVG alongside every NC file
-- **Verification overlays must come from the generator.** The generator outputs its computed toolpaths (rough, penultimate, finish, spring offsets) back onto the SVG as lime green dashed overlays, converted from NC mm to SVG px via the inverse coordinate transform. The overlays represent exactly what the NC file will cut. Hand-computed overlays using a separate code path will not catch generator errors. *See claudecam workflow doc, Generator Toolpath Overlays section.*
+- **Verification overlays must come from the generator.** The generator outputs its computed toolpaths (rough, penultimate, finish, spring offsets) back onto the SVG as lime green dashed overlays, converted from NC mm to SVG px via the inverse coordinate transform. The overlays represent exactly what the NC file will cut. Hand-computed overlays using a separate code path will not catch generator errors. *See [claudecam workflow doc, Generator Toolpath Overlays section](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md).*
 - Run order must be stated explicitly when multiple files are part of one operation
 - **When a re-uploaded verification SVG contains a `<i:aipgf>` block inside `<metadata>`:** strip the entire `<metadata>` block before making any edits. Illustrator embeds PGF data on save -- if not stripped, Claude's edits will be invisible when Jason reopens the file in Illustrator.
 

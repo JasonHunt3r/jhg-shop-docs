@@ -162,7 +162,7 @@ SAFE_Z           = 12.0    # mm
 
 Use the SVG artifact workflow for iterative diagrams -- not the Python render pipeline. Run Python once to compute geometry, save as `.svg`, iterate on the SVG directly from that point. Re-run Python only when a parameter value changes that affects computed coordinates.
 
-*Full workflow, visualization hierarchy, Illustrator round-trip rules, and bezier toolpath pipeline: `jhg_claudecam_workflow_1_0.md`*
+*Full workflow, visualization hierarchy, Illustrator round-trip rules, and bezier toolpath pipeline: [jhg_claudecam_workflow_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md)*
 
 ### SVG Source Reference
 
@@ -211,7 +211,7 @@ Scale may be unresolved mid-session during exploration. It must be resolved and 
 
 When a re-uploaded SVG contains a `<i:aipgf>` block inside `<metadata>`, strip the entire `<metadata>` block before making any edits. Illustrator embeds PGF data on save -- if not stripped, Claude's edits will be invisible when the file is reopened in Illustrator.
 
-*Full explanation and failure history: `jhg_claudecam_workflow_1_0.md`, Illustrator Round-Trip section.*
+*Full explanation and failure history: [jhg_claudecam_workflow_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md), Illustrator Round-Trip section.*
 
 ---
 
@@ -230,7 +230,7 @@ All JHG OpenSCAD models follow the **Clipped Panel** approach:
 
 ## SVG-TO-G-CODE METHODOLOGY
 
-**This section describes agreed methodology -- not aspirational goals.** When a generator is built, it must implement the approach documented here. If technical constraints prevent full implementation, flag the deviation and get Jason's approval before proceeding. See IMPLEMENTATION MUST MATCH THE AGREED PLAN in `jhg_troubleshooting_and_build_discipline_1_4.md`.
+**This section describes agreed methodology -- not aspirational goals.** When a generator is built, it must implement the approach documented here. If technical constraints prevent full implementation, flag the deviation and get Jason's approval before proceeding. See IMPLEMENTATION MUST MATCH THE AGREED PLAN in [jhg_troubleshooting_and_build_discipline_1_4.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_troubleshooting_and_build_discipline_1_4.md).
 
 **The standing rule: let the controller interpolate whenever geometry allows.** Feed clean bezier curves to the arc fitter. GRBL generates smoother motion from G2/G3 commands than from hundreds of pre-linearized G1 segments.
 
@@ -245,7 +245,7 @@ ARC_MIN_R     = 1.0    # mm -- arcs tighter than this are likely noise
 ARC_MAX_R     = 200.0  # mm -- arcs larger than this are nearly straight, use G1
 ```
 
-GRBL requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. Project arc endpoints onto the fitted circle and track actual machine position through projected endpoints. *See G-Code Hygiene doc, G2/G3 Arc Commands section.*
+GRBL requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. Project arc endpoints onto the fitted circle and track actual machine position through projected endpoints. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_gcode_hygiene_1_7.md).*
 
 ### Coordinate Transform
 
@@ -279,7 +279,7 @@ After any path reversal, verify:
 assert dot(offset_vec, outward_normal) > 0, "offset direction reversed -- negate ROUGH_LEAVE"
 ```
 
-*Full methodology -- G-code command selection, linearization tolerances, point cleanup rules, helical orbit strategy, profile outline strategy, bezier offset toolpath method: `jhg_claudecam_workflow_1_0.md`, Integration with G-Code Pipeline section.*
+*Full methodology -- G-code command selection, linearization tolerances, point cleanup rules, helical orbit strategy, profile outline strategy, bezier offset toolpath method: [jhg_claudecam_workflow_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md), Integration with G-Code Pipeline section.*
 
 ---
 

@@ -5,7 +5,7 @@ Jason Hunter Guitars -- Claude Collaboration Protocol
 
 *When Claude acts outside its scope, labels findings ambiguously, or carries forward unverified assumptions, the predictability breaks down -- and Jason ends up spending time recovering work instead of moving forward.*
 
-**Deployment note:** The essentials from this doc (scope of action, causation tiers, speculation, inherited context, implementation contract) are embedded in the claudecam runbook for everyday sessions. This full document is the reference version. The intended deployment path is: (3) hosted on GitHub so Claude can fetch it directly via URL without requiring an upload, and (4) referenced in the session starter template so it's always in effect. See `jhg_github_hosting_plan_1_0.md` for the full plan.
+**Deployment note:** The essentials from this doc (scope of action, causation tiers, speculation, inherited context, implementation contract) are embedded in the claudecam runbook for everyday sessions. This full document is the reference version. The intended deployment path is: (3) hosted on GitHub so Claude can fetch it directly via URL without requiring an upload, and (4) referenced in the session starter template so it's always in effect. See [jhg_github_hosting_plan_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_github_hosting_plan_1_0.md) for the full plan.
 
 ---
 

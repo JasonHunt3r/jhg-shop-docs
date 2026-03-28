@@ -1,6 +1,6 @@
 # JHG Scale Widget
 Jason Hunter Guitars -- Utility Doc
-*Specification, placement conventions, and generator for the JHG scale widget. Referenced by `jhg_svg_toolpath_workflow.md`.*
+*Specification, placement conventions, and generator for the JHG scale widget. Referenced by [jhg_claudecam_workflow_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md).*
 
 ---
 

@@ -364,7 +364,7 @@ ARC_MIN_R     = 1.0    # mm -- tighter arcs are likely noise
 ARC_MAX_R     = 200.0  # mm -- larger arcs are nearly straight, use G1
 ```
 
-GRBL also requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. The emitter must project every arc endpoint onto the fitted circle and track actual machine position through projected endpoints, not input points. *See G-Code Hygiene doc, G2/G3 Arc Commands section.*
+GRBL also requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. The emitter must project every arc endpoint onto the fitted circle and track actual machine position through projected endpoints, not input points. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_gcode_hygiene_1_7.md).*
 
 ### Coordinate Transform
 
@@ -539,7 +539,7 @@ Bugs in traversal order (wrong corner sequence, diagonal crossings, return passe
 - **Document window** -- what Jason sees on screen. Upper-left of the Illustrator canvas is top-left, regardless of what's in the document. Jason may naturally refer to positions this way -- "the right corner of the document" means document window, not object frame.
 - **Object frame** -- the natural orientation of the thing being worked on. Derived from the centerline and/or widget when the object is rotated relative to the document. "Up" = toward the top of the object along its functional axis.
 - **Centerline** -- the functional axis of a document or feature. May be offset from the bounding box center. Read from the document as given -- if no centerline is visible, use the heuristics below to find one. The centerline defines the object frame.
-- **Widget** -- the scale reference object (`id` containing `scale-widget`). Has a declared origin point and two perpendicular ruler axes. The 1" box sits inside the 90° sector defined by the axes -- like fair territory in a baseball field, with the origin at home plate. Contains directional labels (TOP, BOT, L, R) oriented to the widget's own axis frame. See `jhg_scale_widget_1_0.md` for full spec and generator.
+- **Widget** -- the scale reference object (`id` containing `scale-widget`). Has a declared origin point and two perpendicular ruler axes. The 1" box sits inside the 90° sector defined by the axes -- like fair territory in a baseball field, with the origin at home plate. Contains directional labels (TOP, BOT, L, R) oriented to the widget's own axis frame. See [jhg_scale_widget_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_scale_widget_1_0.md) for full spec and generator.
 - **Cutpath** -- the confirmed cut path layer in the SVG, identified in Phase 1. Named with `cutpath 01` suffix.
 
 ---
@@ -572,7 +572,7 @@ On upload of any JHG SVG containing a scale widget:
 
 If the widget labels and the derived centerline orientation disagree, flag the discrepancy and ask before proceeding.
 
-*Full widget specification, generator function, and placement conventions: `jhg_scale_widget_1_0.md`*
+*Full widget specification, generator function, and placement conventions: [jhg_scale_widget_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_scale_widget_1_0.md)*
 
 ---
 
@@ -617,4 +617,4 @@ State this explicitly at the start of any session working on a multi-panel layou
 
 ## Neck Pocket Specific
 
-Zone color codes, orientation vocabulary (TOP/BOTTOM), and fit shorthand (Z1-TIGHT, Z3-LOOSE, etc.) for the neck pocket fit reference diagram are job-specific and live in `jhg_neck_pocket_details.md`.
+Zone color codes, orientation vocabulary (TOP/BOTTOM), and fit shorthand (Z1-TIGHT, Z3-LOOSE, etc.) for the neck pocket fit reference diagram are job-specific and live in [jhg_neck_pocket_details.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_neck_pocket_details.md).

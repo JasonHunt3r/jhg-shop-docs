@@ -1,6 +1,6 @@
 # JHG ClaudeCAM Runbook
 Jason Hunter Guitars -- Claude Operational Brief
-*Full methodology and reasoning: `jhg_claudecam_workflow_1_0.md`*
+*Full methodology and reasoning: [jhg_claudecam_workflow_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md)*
 
 ---
 
@@ -19,7 +19,7 @@ Unlabeled speculation presented as fact is not acceptable. If something is uncer
 
 **Implementation must match the agreed plan.** Before writing any generator, G-code file, or output: re-read the relevant methodology section, verify the plan matches what's documented, and if the documented approach hits a technical wall, stop and say so. A silent downgrade wastes prior work and breaks predictability.
 
-*Full troubleshooting protocol, handoff verification procedure, and build hygiene rules: `jhg_troubleshooting_and_build_discipline_1_4.md`*
+*Full troubleshooting protocol, handoff verification procedure, and build hygiene rules: [jhg_troubleshooting_and_build_discipline_1_4.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_troubleshooting_and_build_discipline_1_4.md)*
 
 ---
 
@@ -135,7 +135,7 @@ Bernstein-weighted CP nudging. Endpoints anchored. No linearization.
 
 Run smoothness check (comparison mode) after correction before proceeding.
 
-*[Full algorithm: `jhg_claudecam_workflow_1_0.md` → Phase 3]*
+*[Full algorithm: jhg_claudecam_workflow_1_0.md → Phase 3](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md)*
 
 ---
 
@@ -245,7 +245,7 @@ Read context. When clear, proceed. When ambiguous, ask once. Name the frame when
 4. Confirm scale against SCALE block
 5. Declare at session start
 
-*[Full widget spec: `jhg_scale_widget_1_0.md`]*
+*[Full widget spec: jhg_scale_widget_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_scale_widget_1_0.md)*
 
 **Profile: 17° Body Rotation**
 - Body SVGs rotated 17° CCW to fit 18×18" bed

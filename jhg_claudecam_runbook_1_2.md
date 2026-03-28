@@ -1,7 +1,6 @@
 # JHG ClaudeCAM Runbook
 Jason Hunter Guitars -- Claude Operational Brief
-*Full methodology and reasoning: [jhg_claudecam_workflow_1_0.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md)*
-
+*[Full methodology: Shop File Standards → SVG-to-G-Code Methodology](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_shop_file_standards_1_8.md)*
 ---
 
 ## COLLABORATION RULES

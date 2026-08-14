@@ -248,7 +248,7 @@ All JHG OpenSCAD models follow the **Clipped Panel** approach:
 
 ## SVG-TO-G-CODE METHODOLOGY
 
-**This section describes agreed methodology -- not aspirational goals.** When a generator is built, it must implement the approach documented here. If technical constraints prevent full implementation, flag the deviation and get Jason's approval before proceeding. See IMPLEMENTATION MUST MATCH THE AGREED PLAN in [jhg_troubleshooting_and_build_discipline_1_5.md](jhg_troubleshooting_and_build_discipline_1_5.md).
+**This section describes agreed methodology -- not aspirational goals.** When a generator is built, it must implement the approach documented here. If technical constraints prevent full implementation, flag the deviation and get Jason's approval before proceeding. See IMPLEMENTATION MUST MATCH THE AGREED PLAN in [jhg_troubleshooting_and_build_discipline_1_6.md](jhg_troubleshooting_and_build_discipline_1_6.md).
 
 **The standing rule: let the controller interpolate whenever geometry allows.** Feed clean bezier curves to the arc fitter. GRBL generates smoother motion from G2/G3 commands than from hundreds of pre-linearized G1 segments.
 

@@ -7,6 +7,8 @@ Jason Hunter Guitars — CNC toolpath methodology + build archive. This project 
 ## Layout
 
 - Root `.md` files — the methodology docs, git-tracked, source of truth. Also hosted at `github.com/JasonHunt3r/jhg-shop-docs` (public — kept public so it stays URL-fetchable, a holdover from the claude.ai-era workflow; raw-URL fetching itself is no longer needed now that these are read locally).
+- `transition/` — historical records from the claude.ai → Claude Code migration (2026-08): session handoff, failure mode report, orphaned knowledge extraction, chronology/provenance. Context, not methodology — read only when a question is about project history.
+- `archive/superseded/` — old versions of methodology docs and retired schemes, kept browsable on disk. Never read these for current rules; the root copy is always the live one.
 - `jobs/` — build artifacts: the current `.py` generator + `.nc` output + verification `.svg` per component, one job per subfolder. Excluded from this repo's `.gitignore` and instead its own **independent git repo**, pushed to the **private** `github.com/JasonHunt3r/jhg-shop-jobs` (2026-08-13). Each subfolder also has a `history/` subfolder for quick pre-overwrite snapshots on top of git. Older pre-migration iterations and the full session-export history still live in `~/Desktop/claude docs/` and `~/Downloads`, not here.
 
 ### Generator CLI convention (as of the Panel C fix, 2026-08-13)
@@ -25,7 +27,11 @@ Job generators take the input SVG as a CLI argument — `python jhg_body_pnlC_ro
 | `jhg_scale_widget_1_0.md` | Scale/orientation widget spec used in every JHG SVG |
 | `jhg_neck_pocket_details.md` | Job-specific: neck pocket fit diagram zone codes, `POCKET_EXPAND` sign convention + value history |
 | `jhg_mazerunr_workflow_1_0.md` | Design record for the unfinished MazeRunr pocket-clearing subsystem — Ring Stitch v6, adaptive overlap search, open PTW question. Not used by any current job |
-| `jhg_github_hosting_plan_1_0.md` | Historical — the claude.ai-era fetch-by-URL scheme. Superseded by direct file access in Claude Code; kept for reference only |
+| `archive/superseded/jhg_github_hosting_plan_1_0.md` | Historical — the claude.ai-era fetch-by-URL scheme. Superseded by direct file access in Claude Code; kept for reference only |
+| `transition/jhg_session_handoff_20260813.md` | Migration-era handoff notes — labeled Confirmed/Reported/Open; a communication tool, not ground truth |
+| `transition/jhg_failure_mode_report_1_0.md` | Analysis of Claude-caused defects across the 52 claude.ai conversations (Feb–Apr 2026) |
+| `transition/jhg_orphaned_knowledge_1_1.md` | Knowledge extracted from old conversations that never made it into the methodology docs |
+| `transition/jhg_chronology_and_provenance_1_0.md` | Reconstructed timeline of the claude.ai era — use for trace-back: where an issue first appeared and what shipped downstream of it |
 
 ## Collaboration rules (condensed — full version in the troubleshooting doc)
 

@@ -41,7 +41,7 @@ This is **coverage-as-termination** -- proving the remaining area is fully swept
 
 **Principled fix, not yet built:** derive PTW from the pocket's *inner boundary* -- the widest chord perpendicular to the tiling axis -- or use Shapely's `medial_axis` to get the true pocket centerline for arbitrary shapes.
 
-**Before reaching for Shapely here:** see the Offset Method section in `jhg_shop_file_standards_1_9.md` -- `Polygon.buffer()` clips peninsula features, and pulling Shapely back into geometry work for `medial_axis` re-arms that failure mode for anything else it touches in the same session. `medial_axis` itself may not have this problem, but confirm before assuming it's safe by association.
+**Before reaching for Shapely here:** see the Offset Method section in `jhg_shop_file_standards_2_0.md` -- `Polygon.buffer()` clips peninsula features, and pulling Shapely back into geometry work for `medial_axis` re-arms that failure mode for anything else it touches in the same session. `medial_axis` itself may not have this problem, but confirm before assuming it's safe by association.
 
 **Open strategic question, never resolved:** how much of ring-offset-plus-inset-collapse clearing is just reinventing standard CAM contour clearing. Honest answer from the session that raised it: partially, yes -- the offset-ring and inset-collapse geometry is standard. The adaptive minimum-ring-count search with *guaranteed* coverage is not, and is the part worth keeping if this gets rebuilt on top of a standard library instead of by hand.
 

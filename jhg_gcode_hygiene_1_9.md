@@ -437,7 +437,7 @@ Every generated NC file must begin with this header before the modal setup block
 ## PIPELINE DEFAULTS
 
 - Always generate a verification SVG alongside every NC file
-- **Verification overlays must come from the generator.** The generator outputs its computed toolpaths (rough, penultimate, finish, spring offsets) back onto the SVG as lime green dashed overlays, converted from NC mm to SVG px via the inverse coordinate transform. The overlays represent exactly what the NC file will cut. Hand-computed overlays using a separate code path will not catch generator errors. *See [claudecam workflow doc](jhg_claudecam_workflow_1_0.md), Overlay Limitation section — overlays verify where the bit cuts, not traversal order.*
+- **Verification overlays must come from the generator.** The generator outputs its computed toolpaths (rough, penultimate, finish, spring offsets) back onto the SVG as lime green dashed overlays, converted from NC mm to SVG px via the inverse coordinate transform. The overlays represent exactly what the NC file will cut. Hand-computed overlays using a separate code path will not catch generator errors. *See [claudecam workflow doc](jhg_claudecam_workflow_1_1.md), Overlay Limitation section — overlays verify where the bit cuts, not traversal order.*
 - Run order must be stated explicitly when multiple files are part of one operation
 - **When a re-uploaded verification SVG contains a `<i:aipgf>` block inside `<metadata>`:** strip the entire `<metadata>` block before making any edits. Illustrator embeds PGF data on save -- if not stripped, Claude's edits will be invisible when Jason reopens the file in Illustrator.
 

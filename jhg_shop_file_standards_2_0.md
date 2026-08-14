@@ -180,7 +180,7 @@ SAFE_Z           = 12.0    # mm
 
 Use the SVG artifact workflow for iterative diagrams -- not the Python render pipeline. Run Python once to compute geometry, save as `.svg`, iterate on the SVG directly from that point. Re-run Python only when a parameter value changes that affects computed coordinates.
 
-*Full workflow, visualization hierarchy, Illustrator round-trip rules, and bezier toolpath pipeline: [jhg_claudecam_workflow_1_0.md](jhg_claudecam_workflow_1_0.md)*
+*Full workflow, visualization hierarchy, Illustrator round-trip rules, and bezier toolpath pipeline: [jhg_claudecam_workflow_1_1.md](jhg_claudecam_workflow_1_1.md)*
 
 ### SVG Source Reference
 
@@ -229,7 +229,7 @@ Scale may be unresolved mid-session during exploration. It must be resolved and 
 
 When a re-uploaded SVG contains a `<i:aipgf>` block inside `<metadata>`, strip the entire `<metadata>` block before making any edits. Illustrator embeds PGF data on save -- if not stripped, Claude's edits will be invisible when the file is reopened in Illustrator.
 
-*Full explanation and failure history: [jhg_claudecam_workflow_1_0.md](jhg_claudecam_workflow_1_0.md), Illustrator Round-Trip section.*
+*Full explanation and failure history: [jhg_claudecam_workflow_1_1.md](jhg_claudecam_workflow_1_1.md), Illustrator Round-Trip section.*
 
 ---
 
@@ -324,7 +324,7 @@ After any path reversal, verify:
 assert dot(offset_vec, outward_normal) > 0, "offset direction reversed -- negate ROUGH_LEAVE"
 ```
 
-*Full emission methodology -- G-code command selection, linearization tolerances, arc fitting constraints, point cleanup rules, helical orbit hole strategy, five-stage finish pass sequence: [jhg_gcode_hygiene_1_9.md](jhg_gcode_hygiene_1_9.md). The bezier correction pipeline (measure/correct/split) lives in [jhg_claudecam_workflow_1_0.md](jhg_claudecam_workflow_1_0.md), Phases 2--4.*
+*Full emission methodology -- G-code command selection, linearization tolerances, arc fitting constraints, point cleanup rules, helical orbit hole strategy, five-stage finish pass sequence: [jhg_gcode_hygiene_1_9.md](jhg_gcode_hygiene_1_9.md). The bezier correction pipeline (measure/correct/split) lives in [jhg_claudecam_workflow_1_1.md](jhg_claudecam_workflow_1_1.md), Phases 2--4.*
 
 ---
 

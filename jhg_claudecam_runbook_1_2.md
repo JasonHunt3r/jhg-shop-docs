@@ -134,7 +134,7 @@ Bernstein-weighted CP nudging. Endpoints anchored. No linearization.
 
 Run smoothness check (comparison mode) after correction before proceeding.
 
-*[Full algorithm: jhg_claudecam_workflow_1_0.md → Phase 3](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_0.md)*
+*[Full algorithm: jhg_claudecam_workflow_1_1.md → Phase 3](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_claudecam_workflow_1_1.md)*
 
 ---
 

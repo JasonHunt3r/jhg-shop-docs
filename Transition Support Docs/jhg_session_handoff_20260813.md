@@ -9,6 +9,132 @@ against real files, not facts; Open items are genuinely unresolved.
 
 ---
 
+## UPDATE — same session, continued (§0)
+
+Everything below this point was written before the punch list in §7 was worked
+through. All of §6's design questions are still open, but real progress was made
+on them tonight. Read this section first; it supersedes some of what follows.
+
+**Punch list items 1-4 (from the original handoff) are done, committed, and
+pushed to both repos** (public docs repo, private jobs repo):
+- Doc changes from earlier in the session committed and pushed.
+- `jobs/panel-e`'s docstring reconciled against the confirmed domain model —
+  matches better than first thought; two real discrepancies (dip depth 1.0mm
+  vs. panel-c's 1.5mm — since corrected understanding, see below; missing
+  source SVG from the repo) deliberately deferred to the shared-geometry work
+  rather than fixed twice.
+- `jobs/panel-a`'s stale March 22 repo copy replaced with the real last-cut
+  file (`_8_1`, 2026-04-04). Old copy archived to `history/`.
+- CLI-argument/no-overwrite convention applied to panel-a, panel-e,
+  headstock-neo3, headstock-neo4 (panel-c already had it). Verified end-to-end
+  by actually running three of them. **headstock-neo3 could not be verified**
+  — no locally saved SVG has the `id="Headstock"` element this generator
+  expects; that file's true source SVG appears missing from the archive
+  entirely, unrelated to tonight's edit.
+
+**`reverse_commands()` bug — found, root-caused, fixed, verified, shipped.**
+Confirmed via direct code execution (not just reading): the function's own
+comments describe accepting an optional `start_point` parameter and falling
+back safely if absent; the code that shipped instead unconditionally drops the
+last reversed command, on the stated assumption that "cmd[0] is almost always
+G1" — which is false for 4 of this file's 8 point lists (they start with an
+arc). Measured real gaps of 0.26–8.7mm between the go-and-come return leg's
+actual endpoint and the true plunge point, on both the pocket wall and body
+outline, right next to each plunge point. **Fixed** in
+`jobs/panel-a/jhg_body_pnlA_rot17_8_1.py`: `reverse_commands()` now takes
+`start_point` explicitly (matching what `jhg_gcode_hygiene_1_8.md` already
+prescribed — another case of code not matching an existing correct doc rule).
+All 6 call sites updated. Verified: gap is now exactly `0.0000mm` on every
+checked pass. No doc changes needed or made — Jason wants doc streamlining
+deferred until the shared-geometry architecture work lands, so this fix is
+code-only for now.
+
+**Panel-a's shortened depth schedule is not a bug — confirmed by Jason
+directly.** `DEPTH_SCHEDULE`/`FULL_DEPTH` in `jhg_body_pnlA_rot17_8_1.py`
+deliberately stop 1mm short of true 16mm depth. Reason: **the TTC450's bed
+needs planing — it's not flat.** At true full depth, the bit over-cuts on the
+high side of the workpiece and can sever the material bridge holding the part
+down mid-cut, letting it shift or come loose — a safety issue, not just a
+finish issue. **Do not revert this to full depth without re-checking bed
+flatness first.** Code comment rewritten to state this explicitly (previously
+just said "TEMP", which read as safe to remove). Also saved to
+[[project_claudecam_setup]] memory so it isn't dependent on this file alone.
+
+**`POCKET_EXPAND` discrepancy — resolved, turned out to be nothing.** The
+`0.4` vs `0.41` mismatch flagged earlier tonight was comparing the *stale*
+March file's value against the recovered tuning history. The real file
+(`_8_1`, now the actual repo copy) already has `POCKET_EXPAND = 0.41` — the
+fully-tuned final value. No decision was needed; the file swap earlier in the
+session already fixed it as a side effect.
+
+**Z-coordinate format (`.1f` vs. the documented `.2f`) — checked, real
+deviation, currently harmless.** Both panel-a and panel-c still use `.1f` in
+their `linear()`/`rapid()` functions, contradicting `jhg_gcode_hygiene_1_8.md`'s
+Z COORDINATE FORMAT section. But every Z value actually in use in both files
+(`depth_passes()` rounds to 1 decimal at generation time; `DIP_DEPTH`,
+`SAFE_Z`, `PARK_Z`, `FULL_DEPTH` are all single-decimal) — so nothing is
+currently being truncated. Low-priority hygiene fix, not urgent, not done.
+
+**CAMotics installed and used successfully.** No Homebrew cask; installed
+from the project's GitHub releases directly (`camotics_1.2.0_x86_64.pkg`,
+Intel build, runs under Rosetta 2 on Apple Silicon). **No arm64 build exists
+in any release going back to 2017, and the last macOS release was February
+2019** despite the source repo still receiving commits — don't wait on native
+Apple Silicon support; plan to move to NCViewer (browser-based, already named
+in the docs) as the durable choice, and treat CAMotics as good for tonight's
+use only. **Panel-c's fixed `.nc` (`jhg_body_pnlC_rot17_1_6_6.nc`) simulated
+clean, no errors, including through the neck-EMG/concave-dip area.** This is
+a real answer to the `samples_per_curve=30` question from earlier in the
+session — whatever's theoretically marginal about that value isn't producing
+a visible defect on this specific geometry.
+
+**Shared-geometry groundwork — major finding, changes the shape of the
+problem.** Started by pulling real coordinates for what the code calls C1/C2
+(the points where Panel A's pocket-stitched outline was assumed to diverge
+from Panel C's continuous perimeter).
+
+- Coordinate-origin drift between the current files is small: ~0.04mm.
+  Nowhere near the historical 1.277mm drift incident — that was almost
+  certainly from older, since-superseded file versions.
+- But the raw C1/C2 points (each file's own path-array endpoints) showed an
+  apparent ~11mm mismatch in the pocket-opening span between the two files.
+  Investigated with a full-outline nearest-neighbor sweep (692 points of
+  Panel A's outline against all 1234 points of Panel C's) rather than
+  trusting the two endpoint samples alone: **median gap across the entire
+  shared perimeter is 0.307mm** — the horns, the waist, essentially the whole
+  shape matches within ordinary hand-tracing noise. The large gap is real but
+  narrowly localized, and — critically — **it ramps up smoothly and
+  monotonically approaching each path endpoint, not abruptly.** That's the
+  signature of a genuine, deliberately-drawn lead-in/lead-out curve, not
+  corrupted or conflicting design geometry.
+- **Jason's read, confirmed by the data:** C1/C2 as currently computed aren't
+  real geometric junctions at all — they're arbitrary safe-approach points
+  placed outside the body shape, for the tool to move to before diving into
+  the pocket cut. The *actual* shared/diverge boundary is further inside each
+  path than the raw endpoints.
+- **Precisely located both true transition points** (where the smooth ramp
+  begins, distinguished from noise-floor scatter by monotonicity): C1-side at
+  Panel A outline index 622, `(-86.62, 166.52)`, matching Panel C outline
+  index 482, `(-86.63, 166.58)` — 0.06mm apart. C2-side at Panel A index 40,
+  `(-20.47, 155.37)`, matching Panel C index 668, `(-20.12, 155.58)` — 0.41mm
+  apart. **The real shared segment is indices 40–622 of Panel A's 692-point
+  outline array — 582 of 692 points, the large majority of the shape.**
+- **What this means for the architecture:** it's sounder than it looked a few
+  messages earlier tonight. This isn't "reconcile two different curves" — the
+  underlying shape is already essentially one curve, independently hand-drawn
+  and matching within noise almost everywhere. The real engineering task is
+  narrower: pin these two precise transition points as the true C1/C2
+  (instead of trusting either file's own incidental path-array endpoints),
+  and treat the short spans beyond them (each file's own lead-in/lead-out
+  toward its own approach point) as legitimately panel-specific.
+- **Not yet done:** the same treatment for the EMG-cavity shared segments
+  (Panel A's plain rectangle vs. Panel C's ear-tab boundary) — only the outer
+  perimeter has been analyzed this way so far. Stock size/origin decision,
+  and the sharing-mechanism decision (shared `.py` module vs. generated
+  fragment), are both still open — see §6 below, otherwise unchanged.
+
+---
+
 ## 1. Repo state (Confirmed)
 
 - **Public** `github.com/JasonHunt3r/jhg-shop-docs` — the `.md` methodology docs,

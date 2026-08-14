@@ -20,8 +20,7 @@ Job generators take the input SVG as a CLI argument — `python jhg_body_pnlC_ro
 | Doc | Read for |
 |---|---|
 | `jhg_troubleshooting_and_build_discipline_1_5.md` | Collaboration protocol — read this first, every session. Includes CHECK EXISTING RULES BEFORE DEBUGGING, BUG CLASS RECURRENCE, and the shop/engineering vocabulary table |
-| `jhg_claudecam_runbook_1_2.md` | Condensed operational brief for SVG/CNC sessions — startup protocol, phases 1-4, spatial language |
-| `jhg_claudecam_workflow_1_1.md` | Full workflow — same content as the runbook, unabridged, with the bezier correction algorithm |
+| `jhg_claudecam_workflow_1_1.md` | The SVG/CNC workflow — visualization hierarchy, smoothness checks, phases 1-4 (identify → measure → correct → split), bezier correction algorithm, layer/visibility rules, spatial language |
 | `jhg_gcode_hygiene_1_9.md` | The G-code authority — machine constants (TTC450 PRO), output rules, feed rates, command selection, arc fitting + radius constraint, five-stage FINISH PASS SEQUENCE, HELICAL ORBIT hole strategy, ARC-FIT PATH ROTATION, point cleanup |
 | `jhg_shop_file_standards_2_0.md` | Cross-file conventions — the `.py` generator is the deliverable, section labeling, PARAMETERS block (canonical values live in generators; docs cite, never restate), parameter risk taxonomy, bezier sample density, offset method (buffer() vs PyClipper, MITER_LIMIT) |
 | `jhg_scale_widget_1_0.md` | Scale/orientation widget spec used in every JHG SVG |
@@ -43,6 +42,13 @@ Job generators take the input SVG as a CLI argument — `python jhg_body_pnlC_ro
 - **Check existing rules before debugging.** Search the doc library for the mechanism involved before diagnosing a bug from scratch — a bug that looks novel from inside one session is often already a documented, solved problem in a different file.
 - **Bug class recurrence.** A bug found and fixed in one pass/section of a generator is a strong prior the same pattern exists elsewhere in the same file. Check every location using that mechanism before declaring the bug class closed, not just the one that was found.
 
-## When resuming SVG/CNC work
+## When resuming SVG/CNC work — ON UPLOAD, DO THIS FIRST
 
-Read `jhg_claudecam_runbook_1_2.md` and run its **ON UPLOAD — DO THIS FIRST** protocol against whatever SVG is in play (scale widget, centerline, cut path identification) before doing anything spatial.
+Before doing anything spatial with a JHG SVG:
+
+1. Search for `id` containing `scale-widget`. Read `data-origin-x`, `data-origin-y`, `data-axis-angle`. Confirm against the SCALE block comment. (No widget: use the SCALE block. Neither: stop and ask.)
+2. Find the centerline segment, extend it conceptually, establish the object frame.
+3. Declare: "Scale widget at [origin], axis angle [N]°. Up in object frame is toward [direction]. Scale confirmed at [value] px/mm." Jason corrects this if wrong before any work proceeds.
+4. Search for the cut path (identifier list in the workflow doc, Phase 1). Report what was found.
+
+Then follow `jhg_claudecam_workflow_1_1.md` for the phase pipeline. (The old condensed runbook is retired to `archive/superseded/` — the workflow doc is the single source; its one orphan rule, the lower-confidence identifier qualifier, was moved into Phase 1.)

@@ -192,7 +192,7 @@ If no scale widget is found, state that and proceed with the SCALE block comment
 **Accepted cut path identifiers** (any of the following in the element's `id` or Illustrator layer name):
 - `cutpath`, `cut_path`, `cut-path`, `CutPath`, `cut path`
 - `toolpath`, `tool_path`, `ToolPath`
-- `offset`, `bit_path`, `finish_path`
+- `offset`, `bit_path`, `finish_path` *(lower confidence -- confirm before accepting)*
 
 **If exactly one candidate is found:**
 - Run the smoothness check in import mode

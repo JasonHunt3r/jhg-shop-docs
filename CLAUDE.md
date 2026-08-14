@@ -22,7 +22,7 @@ Job generators take the input SVG as a CLI argument — `python jhg_body_pnlC_ro
 | `jhg_troubleshooting_and_build_discipline_1_5.md` | Collaboration protocol — read this first, every session. Includes CHECK EXISTING RULES BEFORE DEBUGGING, BUG CLASS RECURRENCE, and the shop/engineering vocabulary table |
 | `jhg_claudecam_runbook_1_2.md` | Condensed operational brief for SVG/CNC sessions — startup protocol, phases 1-4, spatial language |
 | `jhg_claudecam_workflow_1_0.md` | Full workflow — same content as the runbook, unabridged, with the bezier correction algorithm |
-| `jhg_gcode_hygiene_1_8.md` | Machine constants (TTC450 PRO), G-code output rules, feed rates, arc radius constraint, ARC-FIT PATH ROTATION |
+| `jhg_gcode_hygiene_1_9.md` | The G-code authority — machine constants (TTC450 PRO), output rules, feed rates, command selection, arc fitting + radius constraint, five-stage FINISH PASS SEQUENCE, HELICAL ORBIT hole strategy, ARC-FIT PATH ROTATION, point cleanup |
 | `jhg_shop_file_standards_1_9.md` | Cross-file conventions — the `.py` generator is the deliverable, section labeling, PARAMETERS block, bezier sample density, offset method (buffer() vs PyClipper, MITER_LIMIT) |
 | `jhg_scale_widget_1_0.md` | Scale/orientation widget spec used in every JHG SVG |
 | `jhg_neck_pocket_details.md` | Job-specific: neck pocket fit diagram zone codes, `POCKET_EXPAND` sign convention + value history |

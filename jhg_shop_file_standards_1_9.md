@@ -247,7 +247,7 @@ ARC_MIN_R     = 1.0    # mm -- arcs tighter than this are likely noise
 ARC_MAX_R     = 200.0  # mm -- arcs larger than this are nearly straight, use G1
 ```
 
-GRBL requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. Project arc endpoints onto the fitted circle and track actual machine position through projected endpoints. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_gcode_hygiene_1_8.md).*
+GRBL requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. Project arc endpoints onto the fitted circle and track actual machine position through projected endpoints. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](jhg_gcode_hygiene_1_9.md).*
 
 ### Bezier Sample Density -- Concave Features Need Denser Sampling
 

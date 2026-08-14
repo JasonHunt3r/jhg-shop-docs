@@ -1,6 +1,6 @@
 # JHG ClaudeCAM Runbook
 Jason Hunter Guitars -- Claude Operational Brief
-*[Full methodology: Shop File Standards → SVG-to-G-Code Methodology](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_shop_file_standards_1_8.md)*
+*[Full methodology: Shop File Standards → SVG-to-G-Code Methodology](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_shop_file_standards_1_9.md)*
 ---
 
 ## COLLABORATION RULES
@@ -18,7 +18,7 @@ Unlabeled speculation presented as fact is not acceptable. If something is uncer
 
 **Implementation must match the agreed plan.** Before writing any generator, G-code file, or output: re-read the relevant methodology section, verify the plan matches what's documented, and if the documented approach hits a technical wall, stop and say so. A silent downgrade wastes prior work and breaks predictability.
 
-*Full troubleshooting protocol, handoff verification procedure, and build hygiene rules: [jhg_troubleshooting_and_build_discipline_1_4.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_troubleshooting_and_build_discipline_1_4.md)*
+*Full troubleshooting protocol, handoff verification procedure, and build hygiene rules: [jhg_troubleshooting_and_build_discipline_1_5.md](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_troubleshooting_and_build_discipline_1_5.md)*
 
 ---
 
@@ -172,7 +172,7 @@ GRBL radius constraint: project arc endpoints onto fitted circle. Track actual m
 
 **Winding/offset direction:** After any path reversal, verify: `dot(offset_vec, outward_normal) > 0`. If negative, negate offset amount.
 
-*[Full methodology: Shop File Standards → SVG-to-G-Code Methodology](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_shop_file_standards_1_8.md)*
+*[Full methodology: Shop File Standards → SVG-to-G-Code Methodology](https://raw.githubusercontent.com/JasonHunt3r/jhg-shop-docs/main/jhg_shop_file_standards_1_9.md)*
 
 ---
 

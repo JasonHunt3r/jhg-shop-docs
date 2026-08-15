@@ -35,6 +35,8 @@ Keeping events out of the rule docs is what stops this layer from becoming a fou
 
 The gap is not raw material. It is **findability** — most of this is organized by rule or by file, and a future dig arrives with a symptom or a question.
 
+**Named failure mode — "doc runs ahead of code":** values enter the docs at proposal time and are never written back from shipped code. Three confirmed instances, none ever implemented anywhere: `PENULT_LEAVE = 0.5` (standards, Mar 25 — the generator change stayed in a session container), `FEED_SPRING = 750` as a universal outline value (neo4 ships 669), `SAMPLES_PER_CURVE = 60` (a whole standing-rule section; the entire fleet hardcodes 30). This mechanism is behind most of what the 2026-08-14 rewrite untangled. The canonical-value rule (standards 2.0) is the forward fix; this note is the historical record.
+
 ---
 
 ## Deliverables, in priority order

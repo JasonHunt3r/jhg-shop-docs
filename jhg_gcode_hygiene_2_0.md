@@ -2,7 +2,7 @@
 Jason Hunter Guitars — TwoTrees TTC450 PRO Standards
 *These are the standing rules for every G-code file generated for JHG. Read this before writing or editing any NC file.*
 
-**1.9 → 2.0 (2026-08-15):** `ARC_MAX_R` is now **derived, not chosen** — see ARC FITTING CONSTRAINTS. The 100/200 body-panel-vs-headstock split this doc previously recorded as intentional was traced to a March workaround reverted in one lineage only; all four generators now compute the same value from `ARC_MAX_CHORD` and `ARC_FIT_TOL`. Added PATH FIDELITY: `ARC_FIT_TOL` bounds path error only *at sample points*, and the unbounded excursion between them was measured at 0.345mm on shipped Panel C — 3.5x the tolerance assumed to be binding. Generators now measure it (`jobs/path_fidelity.py`) and stamp `PATH_DEV_MAX` into the NC; `verify_nc.py` gates on it.
+**1.9 → 2.0 (2026-08-15):** Sweep rule enforced at last — it was written in March, implemented in the headstock lineage only, and the body panels could fit a 360-degree arc that GRBL cuts as a full circle. Now bounded in every generator and gated. This also resolved the `samples_per_curve` 30-vs-60 split: it was load-bearing, not drift. `ARC_MAX_R` is now **derived, not chosen** — see ARC FITTING CONSTRAINTS. The 100/200 body-panel-vs-headstock split this doc previously recorded as intentional was traced to a March workaround reverted in one lineage only; all four generators now compute the same value from `ARC_MAX_CHORD` and `ARC_FIT_TOL`. Added PATH FIDELITY: `ARC_FIT_TOL` bounds path error only *at sample points*, and the unbounded excursion between them was measured at 0.345mm on shipped Panel C — 3.5x the tolerance assumed to be binding. Generators now measure it (`jobs/path_fidelity.py`) and stamp `PATH_DEV_MAX` into the NC; `verify_nc.py` gates on it.
 
 **1.8 → 1.9 (2026-08-14):** Recovered four emission-methodology sections (G-Code Command Selection, Arc Fitting Constraints, Helical Orbit, Point Cleanup) that were lost in the shop-file-standards 1.7→1.8 halving — this doc is now their home, making it the G-code authority. Rewrote FINISH PASS SEQUENCE to the shipped five-stage ladder (stepped penultimate + spring pass), with parameter names in prose and the generator PARAMETERS block as the canonical value source. Helical Orbit corrected to shipped practice: single orbit radius (direction reversal, not a diameter step, is the deflection-correction mechanism) and the floor-flattening loop added as its own step. Value history and verification: `Evolution/PARAM_CENSUS.md` (local archive).
 
@@ -129,9 +129,30 @@ Above that radius an arc departs from its own chord by **less than the fitter's 
 - Max radius excludes near-straight segments where G1 is equally accurate and simpler — quantified above, not chosen by feel.
 - Min radius excludes spurious tiny arcs from noise in the point data.
 - Direction consistency: if extending an arc would flip CW/CCW, the arc must stop. An inflection point is not a single arc.
-- Sweep angle must stay under ~170 degrees. GRBL handles full circles for holes but profile arcs should be shorter segments.
+- Sweep angle must stay under ~170 degrees (`ARC_MAX_SWEEP_DEG`). GRBL handles full circles for holes but profile arcs should be shorter segments. **Enforced in every generator and gated by `verify_nc.py` as of 2026-08-15 — see below.**
 
 **The failure mode this prevents:** March 2026 — a greedy arc fitter with no chord limit merged 6+ points into single arcs spanning 24mm. The arcs passed the radial tolerance check (all points were within 0.1mm of the fitted circle) but the arc path between those points deviated significantly from the actual curve. The result was visibly wrong at the top-left corner and right-side S-curve of the headstock outline.
+
+### The sweep rule was written in March and implemented in one lineage only — Confirmed 2026-08-15
+
+The headstock generators have bounded sweep since 2026-03-19 (`sweep < math.pi*0.95`, alongside a direction-consistency check). **The body panels never did.** `fit_arc` there bounded radius, chord and tolerance — none of which limit how far around the circle a span travels.
+
+Left unbounded it closes. Measured on Panel A at `samples_per_curve = 60`: a fitted span whose endpoints land **0.012mm apart on a 55.1mm-radius circle**, emitted as one arc. GRBL's rule for *start equals end with I/J given* makes that a **full circle** — a 110mm-diameter ring cut through the part at `FEED_ROUGH`, at depth, once per depth pass.
+
+**Both body panels were one parameter edit from arming it:**
+
+| max fitted arc sweep | 15 | 30 | 60 | 120 | 240 |
+|---|---|---|---|---|---|
+| Panel A | 103° | **104° (ships)** | **360°** | 346° | 360° |
+| Panel C | **285°** | **307°** | **87° (ships)** | 79° | 92° |
+
+Which is also the answer to a question this doc left open. **The `samples_per_curve` split — Panel A at 30, Panel C at 60 — was never drift. It was load-bearing.** Each panel sat on the only value that avoided the defect on its own geometry, and nobody knew why. With the sweep rule enforced, every column above comes back under 170° and the sample count is a free parameter again.
+
+Shipped output was never affected (104° and 87°), so enforcing the rule left both panels byte-identical. `verify_nc.py` gates it too, exempting hole-scale radii because HELICAL ORBIT uses deliberate 180°/360° arcs — all 922 over-swept arcs in the archive are orbit geometry at r=1.32mm.
+
+**Still open:** the headstocks also check *direction consistency* across a span ("an inflection point is not a single arc", above). The body panels still do not.
+
+---
 
 **The failure mode this does NOT prevent — see PATH FIDELITY below.** The chord limit narrows the span, but the same between-points deviation still occurs inside a 15mm chord, and nothing in the fitter measures it.
 

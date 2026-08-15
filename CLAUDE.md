@@ -27,7 +27,8 @@ Job generators take the input SVG as a CLI argument — `python jhg_body_pnlC_ro
 | `jhg_neck_pocket_details.md` | Job-specific: neck pocket fit diagram zone codes, `POCKET_EXPAND` sign convention + value history |
 | `jhg_mazerunr_workflow_1_0.md` | Design record for the unfinished MazeRunr pocket-clearing subsystem — Ring Stitch v6, adaptive overlap search, open PTW question. Not used by any current job |
 | `archive/superseded/jhg_github_hosting_plan_1_0.md` | Historical — the claude.ai-era fetch-by-URL scheme. Superseded by direct file access in Claude Code; kept for reference only |
-| `transition/jhg_session_handoff_20260813.md` | Migration-era handoff notes — labeled Confirmed/Reported/Open; a communication tool, not ground truth |
+| `transition/jhg_session_handoff_20260815.md` | **Current handoff — start here when resuming.** Repo state, the CLOSED Panel C chord history, the delivery gate, open items, and traps that have already cost time |
+| `transition/jhg_session_handoff_20260813.md` | Earlier migration-era handoff — superseded by the above for anything they both cover |
 | `transition/jhg_failure_mode_report_1_0.md` | Analysis of Claude-caused defects across the 52 claude.ai conversations (Feb–Apr 2026) |
 | `transition/jhg_orphaned_knowledge_1_1.md` | Knowledge extracted from old conversations that never made it into the methodology docs |
 | `transition/jhg_chronology_and_provenance_1_0.md` | Reconstructed timeline of the claude.ai era — use for trace-back: where an issue first appeared and what shipped downstream of it |

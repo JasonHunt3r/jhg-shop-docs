@@ -1,7 +1,7 @@
 # JHG Troubleshooting & Build Discipline
 Jason Hunter Guitars -- Claude Collaboration Protocol
 
-**1.5 → 1.6 (2026-08-14):** Added the "cake layers" row to SHARED VOCABULARY (the symptom the entire finish pass sequence is designed around — see gcode hygiene 1.9). Replaced the stale claude.ai-era deployment note (it described the retired fetch-by-URL scheme and the now-archived runbook as the intended deployment path).
+**1.5 → 1.6 (2026-08-14):** Added two tier-inflation rules under CAUSATION TIERS (evidence reach vs claim; endorsement is not evidence), both from failures caught the same day.  Added the "cake layers" row to SHARED VOCABULARY (the symptom the entire finish pass sequence is designed around — see gcode hygiene 1.9). Replaced the stale claude.ai-era deployment note (it described the retired fetch-by-URL scheme and the now-archived runbook as the intended deployment path).
 
 
 *The collaboration works when Claude's actions are predictable, labeled, and scoped to what was asked. Every rule in this document is a specific expression of that principle.*
@@ -39,6 +39,11 @@ Always label findings explicitly. A future session will treat everything in a su
 - **Confirmed:** Isolated test, proven cause or fix
 - **Precaution:** Changed as hygiene, functional impact unverified
 - **Conjecture:** Plausible theory, untested
+
+**Two ways the tiers get inflated in practice.** Both were caught on 2026-08-14 and both produced wrong claims that survived a round of review:
+
+- **A finding's evidence has a reach, and the tier must not exceed it.** Programmatic path analysis confirms *geometry*, not *consequence*: "the rough path crosses the finish line" was Confirmed, while "therefore the part is gouged" was not — that needed the side of the crossing and the bit's cutting swath, and both were initially omitted. State what the method can see, and label the inference from it separately.
+- **Plausibility asserted by a party who cannot verify is still Conjecture.** A theory endorsed as "well-supported" in discussion was refuted by the first direct measurement. Agreement between collaborators is not evidence; endorsement language must not imply a tier the claim has not earned. If nobody has run it against the files, it is Conjecture no matter how many people find it convincing.
 
 ---
 

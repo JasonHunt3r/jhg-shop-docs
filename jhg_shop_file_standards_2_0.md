@@ -263,7 +263,7 @@ ARC_MIN_R     = 1.0    # mm -- arcs tighter than this are likely noise
 ARC_MAX_R     = 200.0  # mm -- arcs larger than this are nearly straight, use G1
 ```
 
-GRBL requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. Project arc endpoints onto the fitted circle and track actual machine position through projected endpoints. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](jhg_gcode_hygiene_1_9.md).*
+GRBL requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. Project arc endpoints onto the fitted circle and track actual machine position through projected endpoints. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](jhg_gcode_hygiene_2_0.md).*
 
 ### Bezier Sample Density -- Concave Features Need Denser Sampling
 
@@ -306,7 +306,9 @@ The differences are inside the noise and 60 is marginally *worse* at Panel A's c
 
 **Why the ordering matters more than the value:** the 60 rule was written down in March and the excision fix did not exist until 2026-08-14. Shipping 60 at the time it was documented would have introduced the exact defect class that was removed this week. The rule and its precondition arrived in the wrong order, and a generator brought "into compliance" in the interval would have been made worse by the doc. This is the sharpest argument in the library for the canonical-value rule above: a documented number with no shipped implementation behind it has not been tested against the rest of the pipeline.
 
-**`ARC_FIT_TOL` is the binding constraint on accuracy, fleet-wide.** Both panels land at 0.14--0.19mm worst-case deviation from a dense ground truth regardless of sample count, against `ARC_FIT_TOL = 0.1mm`. Sampling cannot beat the tolerance the fitter re-approximates to. The lever for more accuracy is therefore tightening `ARC_FIT_TOL` (and accepting more, shorter arcs and a bigger file) -- a cost worth paying deliberately when a job needs it, rather than paying it by proxy through a sample count that buys nothing.
+**`ARC_FIT_TOL` is the binding constraint on accuracy, fleet-wide** -- *at sample points only.*
+
+> **Correction, 2026-08-15.** As written below this claim is overstated, and the measurement behind it could not have caught its own limit. `ARC_FIT_TOL` bounds deviation **where the sample points are**; between them the fitted arc is unconstrained and on shipped Panel C bows to **0.345mm**. Every number in this section was obtained by comparing target points to the emitted path -- the same comparison the fitter runs on itself, which returns `ARC_FIT_TOL` by construction no matter what the path does in the gaps. The conclusions here about sample density are therefore **unsafe to rely on until re-run with the path-based metric** in `jobs/path_fidelity.py`. See PATH FIDELITY in `jhg_gcode_hygiene_2_0.md`. Retained rather than rewritten, per this doc's own practice of showing which claims survived contact with a measurement. Both panels land at 0.14--0.19mm worst-case deviation from a dense ground truth regardless of sample count, against `ARC_FIT_TOL = 0.1mm`. Sampling cannot beat the tolerance the fitter re-approximates to. The lever for more accuracy is therefore tightening `ARC_FIT_TOL` (and accepting more, shorter arcs and a bigger file) -- a cost worth paying deliberately when a job needs it, rather than paying it by proxy through a sample count that buys nothing.
 
 ### Offset Method -- `buffer()` Clips Peninsulas
 
@@ -355,7 +357,7 @@ After any path reversal, verify:
 assert dot(offset_vec, outward_normal) > 0, "offset direction reversed -- negate ROUGH_LEAVE"
 ```
 
-*Full emission methodology -- G-code command selection, linearization tolerances, arc fitting constraints, point cleanup rules, helical orbit hole strategy, five-stage finish pass sequence: [jhg_gcode_hygiene_1_9.md](jhg_gcode_hygiene_1_9.md). The bezier correction pipeline (measure/correct/split) lives in [jhg_claudecam_workflow_1_1.md](jhg_claudecam_workflow_1_1.md), Phases 2--4.*
+*Full emission methodology -- G-code command selection, linearization tolerances, arc fitting constraints, point cleanup rules, helical orbit hole strategy, five-stage finish pass sequence: [jhg_gcode_hygiene_2_0.md](jhg_gcode_hygiene_2_0.md). The bezier correction pipeline (measure/correct/split) lives in [jhg_claudecam_workflow_1_1.md](jhg_claudecam_workflow_1_1.md), Phases 2--4.*
 
 ---
 

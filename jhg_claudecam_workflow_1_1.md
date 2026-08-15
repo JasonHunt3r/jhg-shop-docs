@@ -362,7 +362,7 @@ ARC_MIN_R     = 1.0    # mm -- tighter arcs are likely noise
 ARC_MAX_R     = 200.0  # mm -- larger arcs are nearly straight, use G1
 ```
 
-GRBL also requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. The emitter must project every arc endpoint onto the fitted circle and track actual machine position through projected endpoints, not input points. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](jhg_gcode_hygiene_1_9.md).*
+GRBL also requires exact radius match at both endpoints of every G2/G3 arc -- a mismatch of 0.01mm triggers error 33 and halts execution. The emitter must project every arc endpoint onto the fitted circle and track actual machine position through projected endpoints, not input points. *See [G-Code Hygiene doc, G2/G3 Arc Commands section](jhg_gcode_hygiene_2_0.md).*
 
 ### Coordinate Transform
 

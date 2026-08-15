@@ -35,6 +35,21 @@ Keeping events out of the rule docs is what stops this layer from becoming a fou
 
 The gap is not raw material. It is **findability** — most of this is organized by rule or by file, and a future dig arrives with a symptom or a question.
 
+**Closed entry — provenance of the April 2026 Panel C full-depth chord (filed 2026-08-15).** The incident Jason emergency-stopped: the tool rapided to the heel/neck end, plunged to full depth, and set off on a 399mm straight line across the entire body. Mechanism was diagnosed and fixed 2026-08-13 (`ARC-FIT PATH ROTATION`, gcode hygiene 1.9) — the arc fitter began at index 0 while the plunge point came from a separate marker. What was still unknown was **where the defect came from**, and a scan of every archived Panel C NC for long cutting moves at depth answers it:
+
+| Panel C file | Full-body chord |
+|---|---|
+| `jhg_body_pnlC_rot17.nc` (03-19 00:59) | **none** |
+| `JHG Panel C revised.zip` (03-23 11:43) | **appears** — 402mm in `OUTLINE: ROUGH` @Z−1.5 *and* 399mm in `OUTLINE: PENULTIMATE` @Z−16 |
+| `jhg_body_pnlC_rot17_2.nc` (03-25 17:11) | both, unchanged |
+| `_1` … `_1_4` (04-05 → 04-06) | penultimate chord gone; a rough-level one flickers, then clears |
+
+**The defect was introduced, not inherited.** March 19 is clean; it appears in the 2026-03-23 *"Panel C revised"* session — the same session that synced `ROUGH_LEAVE 1.0→2.0`, `PENULT_LEAVE 0.3→0.5` and `DIP_DEPTH 1.0→1.25` with the stated rationale of bringing Panel C up to current shop standards **using Panel A as the working reference**. That is exactly the "echo from Panel A" Jason described: Panel A's structure grafted onto Panel C, where the plunge marker and the path's start index no longer agreed. A quality-improvement session introduced it.
+
+**The file run on 2026-04-04 was almost certainly `jhg_body_pnlC_rot17_2.nc`** — the newest Panel C in existence on that date, carrying both chords. Its Z−1.5 rough chord is survivable; the Z−16 penultimate chord is the one that got stopped.
+
+**Two things worth carrying forward.** The defect survived a `Proven Cuts/` filing twenty minutes after the generation that contained it — Jason's own known-good folder is a record of *intent*, not verification. And it was removed in April only as a side effect of the Big Ears rebuild; nobody diagnosed it for four months. `verify_nc.py`'s engagement check now catches this shape, which is the point of having a gate that runs rather than a rule that is remembered.
+
 **Closed entry — the fpt2 loop cluster and the PyClipper switch (filed 2026-08-14).** `verify_nc.py`, run across the whole Evolution archive, found offset self-intersections in eleven `headstock_neo_43_25mm_fpt2*` / `headstock_neo2_*` files. Confirmed from file timestamps: the cluster spans **2026-03-06 15:31 to 2026-03-07 16:14**. The next headstock generation, `jhg_headstock_neo3_template*.py` (**2026-03-18/19**), is the first built on **PyClipper** (five call sites) and shows **zero** self-intersections. Same hand-rolled-normal-offset vs Clipper split later found across the rest of the fleet. **This is closed, not open** — eleven files of evidence that the Clipper switch eliminated a real defect class eleven days after it appeared, which nobody connected to the change at the time. *Caveat: the fpt2 generator itself is not in the archive, so "hand-rolled" is inferred from the era and the defect signature rather than read from its code.*
 
 **Named failure mode — "endorsement inflates a tier" (logged 2026-08-14).** A conjecture about denser sampling masking an offset loop was passed between collaborators as "well-supported," then refuted by the first direct measurement — 30 samples produced 0 crossings and 60 produced 1, the opposite direction. The claim was consistent with the evidence and untested, which is **Conjecture**; the endorsing language nudged it toward a tier it had not earned. The rule: *plausibility asserted by a party who cannot verify is still Conjecture, and endorsement language must not imply otherwise.* Distinct from "path analysis confirms geometry, not consequence" — that one is about how far the evidence reaches, this one is about what the reader is led to believe. Both belong beside the causation tiers.

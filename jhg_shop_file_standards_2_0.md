@@ -277,7 +277,7 @@ SAMPLES_PER_CURVE = 60   # points per bezier segment before offset/arc-fit
 
 **Standing rule:** default `SAMPLES_PER_CURVE = 60`, not 30. Raise further if a concave feature still produces an oversized arc after offsetting. This is a likely contributor to degenerate `ARC_MAX_R` mismatches too -- see ARC_MAX_R note above; undersampling a curve and spanning too much geometry in one fitted arc produces both symptoms from the same root cause.
 
-**Not yet verified against the current panel-c generator (2026-08-13):** `jhg_body_pnlC_rot17.py` is still at `samples_per_curve=30`. Whether this actually produces a visible defect depends on whether panel-c's geometry has a concave feature sharp enough to trigger it -- confirm before changing, don't change blind.
+**Compliance status (census 2026-08-14): implemented in zero shipped generators.** Every generator in the fleet — including Panel A 8_1, the most advanced — still hardcodes `samples_per_curve=30` as a function default rather than exposing `SAMPLES_PER_CURVE = 60` in the PARAMETERS block. This is a standing rule the code has never caught up to. Whether 30 produces a visible defect in any given job depends on whether its geometry has a concave feature sharp enough to trigger it (the failure that set the rule was a concave neck-joint dip) -- confirm before changing, don't change blind, but bring any generator you touch into compliance.
 
 ### Offset Method -- `buffer()` Clips Peninsulas
 

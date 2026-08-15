@@ -103,6 +103,8 @@ ARC_MIN_R     = 1.0    # mm — arcs tighter than this are likely noise
 ARC_MAX_R     = 200.0  # mm — arcs larger than this are nearly straight, use G1
 ```
 
+*(Values illustrative — headstocks ship `ARC_MAX_R = 200.0`, body panels ship `100.0`. Canonical per job in each generator's PARAMETERS block.)*
+
 **Rules:**
 - Max chord length limits how far any single arc can reach. Without this, the fitter merges long sweeps into single arcs that cut across the actual curve between sample points.
 - Max radius excludes near-straight segments where G1 is equally accurate and simpler.
@@ -160,12 +162,14 @@ This preserves the known-good result for that material without overwriting the b
 Rough passes:         1500 mm/min
 Penultimate passes:   1100 mm/min
 Final passes:          800 mm/min
-Spring passes:         750 mm/min  (outline)
+Spring passes:         750 mm/min  (body-panel outline; neo4 ships 669 for all its spring laps)
 Hole spring laps:      669 mm/min  (helical orbit spring — see Hole Cutting Strategy)
 EMG corner ramp:       600 mm/min
-Helix ramp:           1200 mm/min
+Helix ramp:           1200 mm/min  (neo4; neo3 still ships 1500 — Gen-0 sediment)
 Plunge (all):          500 mm/min
 ```
+
+Values are illustrative of current shipped practice; canonical per job in each generator's PARAMETERS block. **Naming caveat:** the fleet is inconsistent — body panels use `FEED_SPRING` for the outline spring (they have no holes); headstock generators use `FEED_SPRING` for *hole* spring laps and `FEED_OUTLINE_SPRING` for the outline. Flagged for code cleanup; until then, check which one a given generator means before citing it.
 
 ---
 
@@ -321,11 +325,13 @@ Rectangular pickup cavities (EMG apertures) use a corner feed ramp to prevent ov
 
 **The corner vertex is always present in the G-code.** The ramp inserts intermediate points on the sides, but the 90° turn happens at the actual polygon vertex. Do not skip the vertex — that creates a chamfer.
 
-**Parameters:**
+**Parameters (illustrative — canonical per job):**
 ```
 FEED_CORNER    = 600      # mm/min
-CORNER_RAMP_MM = 5.0      # mm — distance before/after corner
+CORNER_RAMP_MM = 5.0      # mm — distance before/after corner (Panel A shipped value)
 ```
+
+**Short-side geometric constraint:** the ramp distance must fit the side. Panel C's stepped lineage reduced `CORNER_RAMP_MM` to 3.0 *and* capped it per-segment with `ramp_len = min(CORNER_RAMP_MM, 0.4 * seg_len)` — at 5.0, the ramp zones from adjacent corners of a 7.61mm EMG-ear short side overlap and no nominal-feed run survives between them. Any generator with sides shorter than `2 × CORNER_RAMP_MM` needs the cap, not just a smaller constant.
 
 ---
 

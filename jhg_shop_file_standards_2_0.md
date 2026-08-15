@@ -2,7 +2,7 @@
 Jason Hunter Guitars — Cross-File Standards
 *These conventions apply to every file type in the JHG library: G-code, Python generators, OpenSCAD models, and SVGs. Read this before creating, editing, or importing any JHG file.*
 
-**1.9 → 2.0 (2026-08-14):** Completed the migration the 1.7→1.8 halving started: emission methodology (command selection, arc fitting reasoning, helical orbit, point cleanup) now lives in `jhg_gcode_hygiene_1_9.md`, and this doc's methodology pointer is accurate for the first time since March. Added the PARAMETER RISK TAXONOMY. PARAMETERS example updated to the current shipped ladder (2.0 / 1.15 / 0.3 — the 0.5 penultimate here previously was a fossil of the four-day March 23–27 window) and stamped illustrative. Value history: `Evolution/PARAM_CENSUS.md` (local archive).
+**1.9 → 2.0 (2026-08-14):** Bezier Sample Density: the never-implemented `SAMPLES_PER_CURVE = 60` rule was measured against 30 on both body panels and found to buy no accuracy while costing 37-72% more file lines; guidance updated with the data and the original failure re-attributed to offset self-intersection.  Completed the migration the 1.7→1.8 halving started: emission methodology (command selection, arc fitting reasoning, helical orbit, point cleanup) now lives in `jhg_gcode_hygiene_1_9.md`, and this doc's methodology pointer is accurate for the first time since March. Added the PARAMETER RISK TAXONOMY. PARAMETERS example updated to the current shipped ladder (2.0 / 1.15 / 0.3 — the 0.5 penultimate here previously was a fossil of the four-day March 23–27 window) and stamped illustrative. Value history: `Evolution/PARAM_CENSUS.md` (local archive).
 
 ---
 
@@ -275,9 +275,27 @@ SAMPLES_PER_CURVE = 60   # points per bezier segment before offset/arc-fit
 
 **Confirmed: 30 is too sparse at concave features.** At a concave neck-joint dip, sparse sampling gives the arc fitter too few points to constrain the fit, and it produces a large-radius arc (seen: r=17.5mm, center *inside* the body) that bulges the bit into the part instead of hugging the wall -- shop term **"loopty-loo."** Rough and penultimate passes were unaffected in the case that surfaced this because polygon-based offsetting fed the fitter different, denser sample spacing than the bezier-derived finish path did -- only the finish pass showed the defect.
 
-**Standing rule:** default `SAMPLES_PER_CURVE = 60`, not 30. Raise further if a concave feature still produces an oversized arc after offsetting. This is a likely contributor to degenerate `ARC_MAX_R` mismatches too -- see ARC_MAX_R note above; undersampling a curve and spanning too much geometry in one fitted arc produces both symptoms from the same root cause.
+**Former standing rule:** default `SAMPLES_PER_CURVE = 60`, not 30. **Measured 2026-08-14 and not supported on current geometries -- see below before applying it.**
 
-**Compliance status (census 2026-08-14): implemented in zero shipped generators.** Every generator in the fleet — including Panel A 8_1, the most advanced — still hardcodes `samples_per_curve=30` as a function default rather than exposing `SAMPLES_PER_CURVE = 60` in the PARAMETERS block. This is a standing rule the code has never caught up to. Whether 30 produces a visible defect in any given job depends on whether its geometry has a concave feature sharp enough to trigger it (the failure that set the rule was a concave neck-joint dip) -- confirm before changing, don't change blind, but bring any generator you touch into compliance.
+### Bezier Sample Density -- the 30-vs-60 measurement (2026-08-14)
+
+The 60 rule was never implemented anywhere: the whole fleet hardcodes `samples_per_curve=30` as a function default. Rather than bring generators into compliance blind, both body panels were regenerated at 30, 60, and a high-density ground truth (Panel A 200, Panel C 500) through the full pipeline, and each toolpath measured against the dense run.
+
+**Confirmed -- on Panel A and Panel C geometry, 60 buys nothing:**
+
+| Job / path | 30 samples | 60 samples |
+|---|---|---|
+| Panel A finish (incl. neck pocket) | max 0.141mm, mean 0.0129mm | max 0.169mm, mean 0.0129mm |
+| Panel A neck pocket zone only | max 0.141mm, mean 0.0180mm | max 0.169mm, mean 0.0213mm |
+| Panel C finish outline | max 0.187mm, mean 0.0110mm | max 0.190mm, mean 0.0088mm |
+
+The differences are inside the noise and 60 is marginally *worse* at Panel A's concave neck pocket -- the exact feature class the rule was written for. **Sampling density is not the dominant error term; `ARC_FIT_TOL` (0.1mm) is.** Doubling the sample count cannot beat the tolerance the arc fitter re-approximates to anyway.
+
+**Confirmed -- 60 has a real cost.** Panel A: 6,591 lines at 30 vs 11,347 at 60 (+72%). Panel C: 7,503 vs 10,295 (+37%). Bigger files on a controller whose whole reason for the G2/G3 pipeline is small files and smooth motion.
+
+**Conjecture (well-supported) -- the original failure was misattributed.** The documented signature was a large-radius arc (r=17.5mm, center inside the body) bulging into the part at a concave dip. Panel C has an arc of exactly that character (r=17.7mm at 30 samples) at its concave feature -- and it *persists at 500 samples* (r=18.2mm), so it is real geometry, not an undersampling artifact. The mechanism that does produce a bulge at concave features is the offset self-intersecting where the offset distance exceeds the local concave radius -- fixed 2026-08-14 by `excise_self_intersections()` in the panel generators (see gcode hygiene, POINT CLEANUP). More samples plausibly masked that loop rather than curing it.
+
+**Current guidance:** `samples_per_curve = 30` is adequate for current geometries and is what ships. Raise it only for a specific feature with a measurement showing it helps -- and if a concave feature bulges, check for an offset self-intersection first, because that is the mechanism with evidence behind it. If a generator does expose the value, it belongs in the PARAMETERS block like any other tunable.
 
 ### Offset Method -- `buffer()` Clips Peninsulas
 

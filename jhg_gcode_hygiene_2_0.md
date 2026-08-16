@@ -2,6 +2,8 @@
 Jason Hunter Guitars — TwoTrees TTC450 PRO Standards
 *These are the standing rules for every G-code file generated for JHG. Read this before writing or editing any NC file.*
 
+**2.0, amended (2026-08-15, later):** Direction consistency now enforced in the body panels too — the last of the three arc-fitting rules the headstocks had and they did not. Unlike the sweep rule it changed shipped output: Panel A was fitting a 69.4mm arc across an inflection at 15 spans, all in rough and penultimate passes, none in finish. Cannot be gated by `verify_nc.py` for a structural reason — see ARC FITTING CONSTRAINTS. Also fixed a false alarm: both body generators' own `End-of-program sequence` self-check counted the `PATH FIDELITY` trailer stamped after `M2` and failed every correct file.
+
 **1.9 → 2.0 (2026-08-15):** Sweep rule enforced at last — it was written in March, implemented in the headstock lineage only, and the body panels could fit a 360-degree arc that GRBL cuts as a full circle. Now bounded in every generator and gated. This also resolved the `samples_per_curve` 30-vs-60 split: it was load-bearing, not drift. `ARC_MAX_R` is now **derived, not chosen** — see ARC FITTING CONSTRAINTS. The 100/200 body-panel-vs-headstock split this doc previously recorded as intentional was traced to a March workaround reverted in one lineage only; all four generators now compute the same value from `ARC_MAX_CHORD` and `ARC_FIT_TOL`. Added PATH FIDELITY: `ARC_FIT_TOL` bounds path error only *at sample points*, and the unbounded excursion between them was measured at 0.345mm on shipped Panel C — 3.5x the tolerance assumed to be binding. Generators now measure it (`jobs/path_fidelity.py`) and stamp `PATH_DEV_MAX` into the NC; `verify_nc.py` gates on it.
 
 **1.8 → 1.9 (2026-08-14):** Recovered four emission-methodology sections (G-Code Command Selection, Arc Fitting Constraints, Helical Orbit, Point Cleanup) that were lost in the shop-file-standards 1.7→1.8 halving — this doc is now their home, making it the G-code authority. Rewrote FINISH PASS SEQUENCE to the shipped five-stage ladder (stepped penultimate + spring pass), with parameter names in prose and the generator PARAMETERS block as the canonical value source. Helical Orbit corrected to shipped practice: single orbit radius (direction reversal, not a diameter step, is the deflection-correction mechanism) and the floor-flattening loop added as its own step. Value history and verification: `Evolution/PARAM_CENSUS.md` (local archive).
@@ -128,7 +130,7 @@ Above that radius an arc departs from its own chord by **less than the fitter's 
 - Max chord length limits how far any single arc can reach. Without this, the fitter merges long sweeps into single arcs that cut across the actual curve between sample points.
 - Max radius excludes near-straight segments where G1 is equally accurate and simpler — quantified above, not chosen by feel.
 - Min radius excludes spurious tiny arcs from noise in the point data.
-- Direction consistency: if extending an arc would flip CW/CCW, the arc must stop. An inflection point is not a single arc.
+- Direction consistency: if extending an arc would flip CW/CCW, the arc must stop. An inflection point is not a single arc. **Enforced in every generator as of 2026-08-15. Generator-side only — `verify_nc.py` cannot gate this one; see below.**
 - Sweep angle must stay under ~170 degrees (`ARC_MAX_SWEEP_DEG`). GRBL handles full circles for holes but profile arcs should be shorter segments. **Enforced in every generator and gated by `verify_nc.py` as of 2026-08-15 — see below.**
 
 **The failure mode this prevents:** March 2026 — a greedy arc fitter with no chord limit merged 6+ points into single arcs spanning 24mm. The arcs passed the radial tolerance check (all points were within 0.1mm of the fitted circle) but the arc path between those points deviated significantly from the actual curve. The result was visibly wrong at the top-left corner and right-side S-curve of the headstock outline.
@@ -150,7 +152,25 @@ Which is also the answer to a question this doc left open. **The `samples_per_cu
 
 Shipped output was never affected (104° and 87°), so enforcing the rule left both panels byte-identical. `verify_nc.py` gates it too, exempting hole-scale radii because HELICAL ORBIT uses deliberate 180°/360° arcs — all 922 over-swept arcs in the archive are orbit geometry at r=1.32mm.
 
-**Still open:** the headstocks also check *direction consistency* across a span ("an inflection point is not a single arc", above). The body panels still do not.
+### Direction consistency — the same gap, closed the same day. Confirmed 2026-08-15
+
+The sibling of the above, and it followed the same shape: written in this doc since March, enforced in the headstocks (`_arc_direction` re-derived as the span extends), absent from both body panels.
+
+**Why the existing checks cannot see it.** `fit_arc`'s acceptance loop measures each sample point's *distance from the fitted centre*. Distance from a centre says nothing about direction of travel. A span that runs along the circle, reverses, and comes back sits at radius `r` for its whole length and passes the tolerance loop cleanly.
+
+**Unlike the sweep rule, this one was not free.** Panel C is clean and regenerates byte-identical, but **Panel A was swallowing an inflection into a single 69.4mm-radius arc** — a near-straight sweep drawn through a region where the real path curves one way and then the other:
+
+```
+was:  G3 X-87.906 Y170.878 I-68.728 J9.316     ; r = 69.4mm, spans the inflection
+now:  G3 X-88.010 Y169.757 I-3.953 J1.369      ; r = 4.2mm
+      G1 X-88.016 Y169.664
+      G2 X-85.476 Y174.962 I6.458 J0.162
+      G2 X-81.686 Y175.547 I2.746 J-5.222
+```
+
+15 spans changed: 10 in `body outline rough` (once per depth pass), 5 in `penult step 1`. **None in the finish or spring pass**, so the wall the part actually keeps was never affected. `PATH_DEV_FROM` is unchanged at 0.1167mm, which bounds the local error at these sites below the maximum already present elsewhere — well inside a 2.0mm rough leave. Panel A 3676 → 3710 lines, 1874 → 1888 arcs. A CAMotics run before and after voxelises to an identical 2,464,810-triangle surface.
+
+**This one cannot be gated by `verify_nc.py`, and that is structural.** Every emitted G2/G3 *is* a single arc by definition — the defect is only visible by comparing the arc against the point list it was fitted to, which the NC does not carry. Sweep is checkable after the fact; direction is not. The guard therefore lives in `fit_arc` and is pinned by `test_generators.py` rather than by the delivery gate. When writing the fixture for it, note that a backtracking span is easy to construct such that the **sweep** bound rejects it first — assert the pre-patch behaviour, or the fixture silently tests nothing.
 
 ---
 

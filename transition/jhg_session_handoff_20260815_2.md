@@ -262,10 +262,12 @@ on GRBL, which has no changer and cuts with whatever is in the spindle, but the
 header block could state the intended tool so a reader and a simulator agree.
 Found by the virtual cut, §2.
 
-**G. Dead code in Panel A — Open, note only.** `offset_curve_outward` and
-`offset_open_curve_outward` are defined and never called; Panel A offsets
-through `offset_open_curve_inward` and `offset_polygon_outward`. Left in place
-deliberately (outside what was asked) but they are an attractive nuisance.
+**G. Dead code in Panel A — CLOSED 2026-08-15** (jobs `e7bfcb8`). Both removed;
+regenerates byte-identical. Worth more than tidiness: `offset_open_curve_outward`'s
+docstring claimed it was *"used for body outline rough/penult offsets"*, which was
+false — the body has always offset through `offset_open_curve_inward`. A reader
+trusting it would have had the offset direction of the whole body outline
+backwards. Both survive in `panel-a/history/` snapshots.
 
 **H. Questions only a cut can answer — Open by design.** Unchanged from the
 morning handoff: is `ROUGH_LEAVE = 2.0` sufficient on MDF (labeled Conjecture),

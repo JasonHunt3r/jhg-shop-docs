@@ -229,10 +229,14 @@ blocking. That is what closes the loop the same way the chord gap was closed.
 by porting it.** The function was **removed from Panel A instead**, and the rule
 it enforced is not part of this methodology. It appears in no doc and in none of
 the 52 archived conversations; its motivating measurement was retracted in the
-commit that added it; and its entire effect was to move the pocket-penultimate
-tail's last point by 0.0075mm — at the C1 splice, where Panel A's interleaved
-design crosses the finish geometry *on purpose*. Porting it to Panel C would
-have installed an invented constraint in the clean panel. Full reasoning in
+commit that added it (claimed 0.311mm, measured 0.0075mm). Its entire effect was
+to move the pocket-penultimate tail's last point by that 0.0075mm, **on the
+offcut side**, an order of magnitude below this file's own 0.1167mm path
+deviation. It was *not* clipping the straight-line pocket approach — that is a
+~58mm `G1` run, identical either way. Porting it to Panel C would have installed
+an invented constraint in the clean panel. The function is preserved verbatim at
+`jobs/archive/truncate_at_finish_crossing_retired.py` with measurements and
+restore instructions, so it can come back as a paste if wanted. Full reasoning in
 `jhg_gcode_hygiene_2_0.md` -> ARC FITTING CONSTRAINTS, and the general lesson in
 troubleshooting 1.6 -> AN UNDOCUMENTED INVARIANT IS A HYPOTHESIS, NOT A RULE.
 **Do not reopen this as a port.**

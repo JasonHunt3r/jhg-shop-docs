@@ -196,16 +196,30 @@ days old, not inherited practice.
 *"inflated by a side-confused measurement walker."* The sequence was: measure a
 violation, discover the measurement was wrong, add the guard anyway.
 
-**What it actually did.** One point: the last point of the pocket-penultimate
-path, moved **0.0075mm**. That is the whole of its effect on Panel A, ever.
+**What it actually did — measured, and it was not inert.** One point, on one of
+six paths: the last point of the pocket-penultimate path, moved **0.0075mm**.
+The other five paths were untouched. In the NC that is two lines, the same
+point twice because the penult runs go-and-come. Line count, arc count and
+`PATH_DEV_FROM` are identical either way.
 
-**And that point is the deliberate junction.** The pocket-penult tail's final
-segment crosses the body finish geometry at the C1 splice *by design* — Panel A
-interleaves the pocket and body outline per Z level and enters the pocket on a
-straight run rather than tracking the pocket/body curve join. That design dates
-to **2026-03-23** (`JHG Body Panel A revised.zip`, first
-`INTERLEAVED ROUGH: POCKET + OUTLINE` generator) and the straight entry has
-survived every refactor since to within 0.09mm. The rule was clipping it.
+**On the waste side, and below the noise floor.** The overshoot is on the
+**offcut** side of the finish line — verified by signed-side test against the
+same finish segment, with `body_rough` (offset 2.0mm outward, so known offcut)
+as the reference. And `body_finish` is the toolpath *centerline*: the wall
+stands `BIT_R` 3.175mm off it, so a 7.5um excursion of the tool centre into the
+offcut never touches the finished wall. For scale, `ARC_FIT_TOL` is 0.1mm and
+this file's own measured path deviation is 0.1167mm — both more than an order of
+magnitude larger than what the rule corrected.
+
+**What it was NOT doing:** clipping the straight-line pocket approach. That is
+the ~58mm `G1` run into the pocket, and it is untouched with the rule on or off.
+Panel A interleaves pocket and body outline per Z level and enters on a straight
+run rather than tracking the pocket/body curve join — a design dating to
+**2026-03-23** (`JHG Body Panel A revised.zip`, the first
+`INTERLEAVED ROUGH: POCKET + OUTLINE` generator), whose straight entry has held
+to within 0.09mm through every refactor since. The rule never came near it. What
+it touched was a 7.5um graze where the pocket-penult path passes the body wall
+at the splice — numerical residue at a hand-off, not intent.
 
 **The hazard it reached for is real, and is covered elsewhere.** A bad SVG
 re-export or leave-ladder edit that drives a stock pass through the finish wall
@@ -215,15 +229,29 @@ which is the right layer for it. A generator-side guard that silently repairs
 geometry is the wrong shape: it cannot tell a bad edit from a designed crossing,
 and it hands you a deliverable NC either way.
 
-**Two traps this produced, both worth carrying:**
+**A raising version was considered and rejected.** Converting it from a silent
+truncation into a hard failure looks like the disciplined choice, but at 0.0075mm
+it would fire on every run of correct geometry. A guard that always trips is not
+a guard.
+
+**The code is kept.** `jobs/archive/truncate_at_finish_crossing_retired.py` has
+the function verbatim, the measurements, the six call sites and restore
+instructions, so bringing it back is a paste rather than a rewrite.
+
+**Three traps this produced, all worth carrying:**
 - **An undocumented invariant in one generator is a hypothesis, not a rule.** It
   was one session away from being ported to Panel C as "belt-and-braces", which
   would have propagated an invented constraint to the one clean panel.
 - **A length-only probe cannot see a truncation in the final segment.** The
   first investigation instrumented the function and reported "0 points removed,
-  never fired" — correct on length, wrong on effect, because the truncated path
-  returns the same number of points with the last one replaced. Compare points,
-  not counts.
+  never fired" — correct on length, wrong on effect, because a truncated path
+  returns the same number of points with the last one replaced. It was caught
+  only when a regenerate-and-diff contradicted the prediction of byte-identical
+  output. Compare points, not counts, and let the diff arbitrate.
+- **Point-in-polygon does not work on `body_finish`.** It is an OPEN path with a
+  57mm gap between its first and last point, so an inside/outside test silently
+  closes it with a 57mm chord and returns a confident wrong answer. Use a local
+  signed-side test against the nearest segment, with a known-side reference.
 
 ---
 

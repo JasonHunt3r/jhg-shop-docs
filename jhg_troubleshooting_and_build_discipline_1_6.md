@@ -151,12 +151,20 @@ must be established or removed before it spreads.
 "finish-corridor invariant" (no rough or penultimate path may cross the finish
 geometry) that appears in no methodology doc and in none of the 52 archived
 conversations. The measurement that motivated it was retracted in the same commit
-that added it. Its entire effect was to move one point by 0.0075mm -- and that
-point was the pocket-penultimate tail at the C1 splice, where Panel A's
-interleaved design crosses *deliberately*. It was one session away from being
-ported to Panel C as belt-and-braces, which would have installed an invented
-constraint in the only body panel that was clean. See
+that added it -- the claimed 0.311mm penetration measured 0.0075mm, about 40x
+smaller. Its entire effect was to move one point by that 0.0075mm, on the offcut
+side, an order of magnitude below the file's own 0.1167mm path deviation. It was
+one session away from being ported to Panel C as belt-and-braces, which would
+have installed an invented constraint in the only body panel that was clean. The
+code is preserved at `jobs/archive/truncate_at_finish_crossing_retired.py`. See
 `jhg_gcode_hygiene_2_0.md` -> ARC FITTING CONSTRAINTS.
+
+**A note on how this was nearly mis-recorded.** The first write-up of the removal
+said the rule was "clipping the deliberate junction" -- Panel A's straight-line
+pocket approach. It was not: that approach is a ~58mm `G1` run, identical with
+the rule on or off. Overstating the case for a decision that is already correct
+still puts a false claim in the library, where the next session inherits it as
+fact. State the measurement, not the narrative it supports.
 
 ---
 

@@ -201,7 +201,14 @@ carries the adjustment on part of its length only. Probed by zeroing
 
 ## 4. Open items
 
-**A. Direction consistency — Open, the closest sibling of what was just fixed.**
+**A. Direction consistency — CLOSED 2026-08-15.** Implemented in both body
+panels (jobs `e7cfb10`). Panel C byte-identical; Panel A changed at 15 spans in
+rough and penult step 1, none in finish or spring, where the fitter was
+swallowing an inflection into a single 69.4mm arc. Cannot be gated by
+`verify_nc.py` -- an emitted G2/G3 is a single arc by definition -- so it is
+pinned by `test_generators.py`. Original text follows.
+
+**A (original).** The closest sibling of what was just fixed.
 The headstocks check that a span does not flip CW/CCW mid-arc ("an inflection
 point is not a single arc" — hygiene, ARC FITTING CONSTRAINTS). **The body
 panels do not.** Same lineage gap, same shape, same doc, still unimplemented.
@@ -218,15 +225,33 @@ An absent `PATH_DEV_MAX` is currently advisory, because the archived NCs and
 both frozen fixtures predate it. Once every generator has reissued, make absence
 blocking. That is what closes the loop the same way the chord gap was closed.
 
-**D. Port `truncate_at_finish_crossing` to Panel C — Open, unchanged.** Was A.1
-in the morning handoff. Belt-and-braces; C has no crossings for it to catch.
+**D. Port `truncate_at_finish_crossing` to Panel C — CLOSED 2026-08-15, and not
+by porting it.** The function was **removed from Panel A instead**, and the rule
+it enforced is not part of this methodology. It appears in no doc and in none of
+the 52 archived conversations; its motivating measurement was retracted in the
+commit that added it; and its entire effect was to move the pocket-penultimate
+tail's last point by 0.0075mm — at the C1 splice, where Panel A's interleaved
+design crosses the finish geometry *on purpose*. Porting it to Panel C would
+have installed an invented constraint in the clean panel. Full reasoning in
+`jhg_gcode_hygiene_2_0.md` -> ARC FITTING CONSTRAINTS, and the general lesson in
+troubleshooting 1.6 -> AN UNDOCUMENTED INVARIANT IS A HYPOTHESIS, NOT A RULE.
+**Do not reopen this as a port.**
 
 **E. Panel E — Open, still needs Jason's decision first.** Its header says
 "Outline-only variant of Panel C. No EMG pocket cuts." Either it is still wanted
 (needs the current ladder, the derived constants, the guards, and a regenerate)
 or Panel C superseded it (retire to `archive/`). Don't align it until answered.
 
-**F. No tool select in any NC — Open, small, note only.** The files issue no
+**F. No tool select in any NC — CLOSED 2026-08-15, comment-only.** Both body NCs
+now name the intended tool in the header (`SPWS2LX6.22`, 6.35 dia x 22 LOC x 50
+OAL x 6.35 shank; the 22mm flute length clears `DEPTH_TOTAL` 16.0mm). **No `T`/`M6`
+is emitted, deliberately** — `T1 M6` was measured to silence CAMotics and yield an
+identical surface, but it has never been sent to the DLC32, and this controller
+has form for silent SD-card failures on non-essential syntax. Jason's call. The
+simulator's fallback is tool 1, which is the correct tool, so the warning is
+cosmetic. Original text follows.
+
+**F (original).** The files issue no
 `T`/`M6`, so a simulator or controller has to guess which tool is loaded —
 CAMotics warns *"cutting move but no current tool, selecting tool 1"*. Harmless
 on GRBL, which has no changer and cuts with whatever is in the spindle, but the

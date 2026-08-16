@@ -179,6 +179,54 @@ now:  G3 X-88.010 Y169.757 I-3.953 J1.369      ; r = 4.2mm
 
 ---
 
+### The "finish-corridor invariant" was removed. Do not reintroduce it. — 2026-08-15
+
+Panel A briefly carried `truncate_at_finish_crossing()`, enforcing a rule that
+*no rough or penultimate path may cross the finish geometry.* **It was removed
+the day after it was added, and the rule is not part of this methodology.**
+
+**It had no provenance.** It appears in no version of this doc, no version of
+Shop File Standards, and no workflow doc. App Claude searched the 52-conversation
+claude.ai archive for a decision to adopt such an invariant and found none. It
+was introduced by a Claude Code session on 2026-08-14 (jobs `9770916`) — three
+days old, not inherited practice.
+
+**Its motivating measurement was retracted in the commit that added it.** The
+"0.311mm penetration at the C1 splice" was, in that commit's own words,
+*"inflated by a side-confused measurement walker."* The sequence was: measure a
+violation, discover the measurement was wrong, add the guard anyway.
+
+**What it actually did.** One point: the last point of the pocket-penultimate
+path, moved **0.0075mm**. That is the whole of its effect on Panel A, ever.
+
+**And that point is the deliberate junction.** The pocket-penult tail's final
+segment crosses the body finish geometry at the C1 splice *by design* — Panel A
+interleaves the pocket and body outline per Z level and enters the pocket on a
+straight run rather than tracking the pocket/body curve join. That design dates
+to **2026-03-23** (`JHG Body Panel A revised.zip`, first
+`INTERLEAVED ROUGH: POCKET + OUTLINE` generator) and the straight entry has
+survived every refactor since to within 0.09mm. The rule was clipping it.
+
+**The hazard it reached for is real, and is covered elsewhere.** A bad SVG
+re-export or leave-ladder edit that drives a stock pass through the finish wall
+is dimensional and unrecoverable. `verify_nc.py`'s `check_engagement_depth`
+catches that on the emitted file — a cut removing material nothing prepared —
+which is the right layer for it. A generator-side guard that silently repairs
+geometry is the wrong shape: it cannot tell a bad edit from a designed crossing,
+and it hands you a deliverable NC either way.
+
+**Two traps this produced, both worth carrying:**
+- **An undocumented invariant in one generator is a hypothesis, not a rule.** It
+  was one session away from being ported to Panel C as "belt-and-braces", which
+  would have propagated an invented constraint to the one clean panel.
+- **A length-only probe cannot see a truncation in the final segment.** The
+  first investigation instrumented the function and reported "0 points removed,
+  never fired" — correct on length, wrong on effect, because the truncated path
+  returns the same number of points with the last one replaced. Compare points,
+  not counts.
+
+---
+
 **The failure mode this does NOT prevent — see PATH FIDELITY below.** The chord limit narrows the span, but the same between-points deviation still occurs inside a 15mm chord, and nothing in the fitter measures it.
 
 **See also:** the next section — every fitted arc must also satisfy GRBL's endpoint-radius constraint before it is emitted.

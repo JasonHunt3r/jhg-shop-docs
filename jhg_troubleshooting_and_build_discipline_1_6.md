@@ -128,6 +128,38 @@ This is not optional groundwork -- it changes what "done" means. A fix that happ
 
 ---
 
+## AN UNDOCUMENTED INVARIANT IS A HYPOTHESIS, NOT A RULE
+
+The inverse of the section above, and it points the other way. There, a rule
+existed in the docs and the generator hadn't been checked against it. Here, a
+constraint exists **only in code** — no doc section, no conversation, no decision
+anyone can point to. That is not a rule. It is one session's inference, and it
+must be established or removed before it spreads.
+
+1. Before enforcing a constraint in a second generator, find the doc section that
+   states it. If there is none, that is the finding -- stop and resolve it
+2. "Belt-and-braces", "for symmetry", and "the other lineage has it" are reasons
+   to *check* a constraint, never reasons to propagate one that isn't written down
+3. A guard that silently repairs geometry is the wrong shape regardless: it cannot
+   distinguish a bad input from a deliberate design, and it yields a clean-looking
+   deliverable either way. Prefer one that refuses -- or a post-hoc gate on the
+   emitted file, where the consequence is visible
+4. When removing an invented constraint, write down *why*, or the next session
+   re-derives it
+
+**The failure that prompted this rule:** 2026-08-14/15 -- Panel A was given a
+"finish-corridor invariant" (no rough or penultimate path may cross the finish
+geometry) that appears in no methodology doc and in none of the 52 archived
+conversations. The measurement that motivated it was retracted in the same commit
+that added it. Its entire effect was to move one point by 0.0075mm -- and that
+point was the pocket-penultimate tail at the C1 splice, where Panel A's
+interleaved design crosses *deliberately*. It was one session away from being
+ported to Panel C as belt-and-braces, which would have installed an invented
+constraint in the only body panel that was clean. See
+`jhg_gcode_hygiene_2_0.md` -> ARC FITTING CONSTRAINTS.
+
+---
+
 ## BUG CLASS RECURRENCE
 
 When a bug is found and fixed in one section of a file, do not declare the bug class closed until every other section using the same mechanism has been checked. A bug found once in a multi-pass generator (rough/penultimate/final/spring, or multi-module pocket+outline files) is a strong prior that the same code pattern was copied into the other passes too.

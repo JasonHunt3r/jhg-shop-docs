@@ -11,6 +11,37 @@ Jason Hunter Guitars — CNC toolpath methodology + build archive. This project 
 - `archive/superseded/` — old versions of methodology docs and retired schemes, kept browsable on disk. Never read these for current rules; the root copy is always the live one.
 - `jobs/` — build artifacts: the current `.py` generator + `.nc` output + verification `.svg` per component, one job per subfolder. Excluded from this repo's `.gitignore` and instead its own **independent git repo**, pushed to the **private** `github.com/JasonHunt3r/jhg-shop-jobs` (2026-08-13). Each subfolder also has a `history/` subfolder for quick pre-overwrite snapshots on top of git. Older pre-migration iterations and the full session-export history still live in `~/Desktop/claude docs/` and `~/Downloads`, not here.
 
+### Simulation — CAMotics (2026-08-15)
+
+Each body-panel job folder carries a `.camotics` project next to its NC, with
+the real tool (6.35mm cylindrical, `BIT_R` 3.175) and stock (400 x 430 x 16mm,
+origin centred, Z0 at the top) already set. Open one in the CAMotics GUI to
+watch the cut, or run it headless:
+
+```
+cd jobs/panel-a
+DYLD_FALLBACK_LIBRARY_PATH=/Applications/CAMotics.app/Contents/Frameworks \
+  /Applications/CAMotics.app/Contents/MacOS/camsim --binary <project>.camotics out.stl
+```
+
+The `DYLD_FALLBACK_LIBRARY_PATH` is needed because `camsim` links `libcairo` by
+absolute `/usr/local/lib` path, which does not exist on Apple Silicon — the app
+bundle ships its own copy in `Frameworks/`. Nothing needs installing. (The
+`gcodetool` binary in the same directory needs no workaround and is useful on
+its own: `--linearize` expands arcs through an independent interpreter, which
+is how the arc emission was cross-checked.)
+
+**What simulation can and cannot settle.** It runs at 0.6mm voxel resolution,
+so it confirms topology and gross correctness — the right part, in the right
+place, nothing cut outside the stock — and cannot see the 0.1mm-class wall
+accuracy `ARC_FIT_TOL` and `PATH_DEV_MAX` govern. It says nothing about feeds,
+chip load, MDF behaviour, bed flatness or workholding. A clean simulation is
+not a cut, in exactly the way a clean `verify_nc.py` is not a cut.
+
+*Expected and not a bug:* the part never separates. `DEPTH_SCHEDULE` holds 1mm
+short of full depth until the bed is planed, so the simulated solid keeps a
+floor at Z-15.
+
 ### Generator CLI convention (as of the Panel C fix, 2026-08-13)
 
 Job generators take the input SVG as a CLI argument — `python jhg_body_pnlC_rot17.py <input_svg>` — rather than a hardcoded filename. They never overwrite the input; they derive a version tag from the input filename's stem and write two matched outputs: `<tag>.nc` and `<tag>_preview.svg`. Apply this same pattern when touching other job generators (panel-a, panel-e, headstocks) that still have the old hardcoded-filename behavior.

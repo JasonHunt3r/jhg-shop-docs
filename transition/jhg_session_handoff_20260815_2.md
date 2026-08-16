@@ -18,8 +18,8 @@ Both clean, both pushed, nothing uncommitted.
 
 | Repo | HEAD | |
 |---|---|---|
-| `jhg-shop-docs` (public) | `1c1160a` | hygiene 2.0 is the live G-code authority; 1.9 retired |
-| `jhg-shop-jobs` (private) | `ca35768` | 3 commits this session |
+| `jhg-shop-docs` (public) | `ddb7c78` + this file's own commit | hygiene 2.0 is the live G-code authority; 1.9 retired |
+| `jhg-shop-jobs` (private) | `3cc3115` | 5 commits this session |
 
 **Do not re-audit the doc library.** Still current. Live set: troubleshooting
 1.6, workflow 1.1, **gcode hygiene 2.0 (the G-code authority — renumbered from
@@ -33,6 +33,9 @@ python3 verify_nc.py <file.nc>     # exit 0
 python3 test_verify_nc.py          # gate fixtures       -- exit 0
 python3 test_generators.py         # input guards (NEW)  -- exit 0
 ```
+
+A fourth check now exists and is not run by any of the above — the virtual
+cut, §2. Use it before a real cut, not instead of the gate.
 
 ---
 
@@ -126,7 +129,48 @@ smooth, closed, gate-passing NC that cuts the wrong shape.
 
 ---
 
-## 2. Generator state — Confirmed
+## 2. The virtual cut — Confirmed, and worth using before the next real one
+
+Jason installed **CAMotics 1.2.0** on 2026-08-14. Each body-panel job now
+carries a `.camotics` project beside its NC with the real tool and stock
+already set; open one in the GUI, or run it headless. Setup, the `camsim`
+`libcairo` workaround, and the limits are in `CLAUDE.md` — do not re-derive
+them, and in particular **do not reach for Homebrew** when `camsim` reports a
+missing `/usr/local/lib/libcairo.2.dylib`. The app bundle ships its own copy;
+nothing needs installing, and on Apple Silicon a Homebrew install would have
+been the wrong architecture anyway.
+
+**What it settled for the current pair — none of which this repo could check
+on its own:**
+
+- **A third-party interpreter reads our arcs identically.** CAMotics' engine
+  traces the same path ours does to **0.007–0.010mm**, its own linearisation
+  budget. Direction, I/J and sweep all agree. That is exactly the property the
+  sweep defect (§1) violated, now independently confirmed rather than
+  self-attested.
+- **Nothing is cut outside the stock**, nothing below Z−15 but the stock
+  bottom, and **the deliberate 1mm hold is present** in the solid.
+- **The finished wall stands 3.170mm (A) / 3.171mm (C) from the finish
+  toolpath**, against `BIT_R` 3.175. The part is the shape the toolpath
+  intends.
+
+**What it cannot settle.** 0.6mm voxels: topology and gross correctness, not
+the 0.1mm-class wall accuracy `ARC_FIT_TOL` and `PATH_DEV_MAX` govern. Nothing
+about feeds, chip load, MDF behaviour, bed flatness or workholding. **A clean
+simulation is not a cut, in exactly the way a clean `verify_nc.py` is not a
+cut** — same caveat, same reason, and it belongs on both.
+
+*Expected and not a bug:* the part never separates in the simulation, because
+`DEPTH_SCHEDULE` holds 1mm short until the bed is planed. It will look like the
+profile failed to cut through. It didn't.
+
+`gcodetool`, in the same directory, needs no workaround and is useful on its
+own — `--linearize` expands arcs through that independent interpreter, which is
+how the emission cross-check above was done.
+
+---
+
+## 3. Generator state — Confirmed
 
 | | Panel A | Panel C | Panel E |
 |---|---|---|---|
@@ -138,6 +182,7 @@ smooth, closed, gate-passing NC that cuts the wrong shape.
 | `ARC_MAX_SWEEP_DEG` | **170** | **170** | – |
 | path-fidelity stamp | **yes** | **yes** | no |
 | input guards | parser | winding | no |
+| `.camotics` sim project | **yes** | **yes** | no |
 | `samples_per_curve` | 30 | 60 | – |
 | `CORNER_RAMP_MM` | 5.0 | 3.0 *(correct — do not unify)* | – |
 | current NC, gate-passing | yes | yes | **none, only in `history/`** |
@@ -154,7 +199,7 @@ carries the adjustment on part of its length only. Probed by zeroing
 
 ---
 
-## 3. Open items
+## 4. Open items
 
 **A. Direction consistency — Open, the closest sibling of what was just fixed.**
 The headstocks check that a span does not flip CW/CCW mid-arc ("an inflection
@@ -181,21 +226,31 @@ in the morning handoff. Belt-and-braces; C has no crossings for it to catch.
 (needs the current ladder, the derived constants, the guards, and a regenerate)
 or Panel C superseded it (retire to `archive/`). Don't align it until answered.
 
-**F. Dead code in Panel A — Open, note only.** `offset_curve_outward` and
+**F. No tool select in any NC — Open, small, note only.** The files issue no
+`T`/`M6`, so a simulator or controller has to guess which tool is loaded —
+CAMotics warns *"cutting move but no current tool, selecting tool 1"*. Harmless
+on GRBL, which has no changer and cuts with whatever is in the spindle, but the
+header block could state the intended tool so a reader and a simulator agree.
+Found by the virtual cut, §2.
+
+**G. Dead code in Panel A — Open, note only.** `offset_curve_outward` and
 `offset_open_curve_outward` are defined and never called; Panel A offsets
 through `offset_open_curve_inward` and `offset_polygon_outward`. Left in place
 deliberately (outside what was asked) but they are an attractive nuisance.
 
-**G. Questions only a cut can answer — Open by design.** Unchanged from the
+**H. Questions only a cut can answer — Open by design.** Unchanged from the
 morning handoff: is `ROUGH_LEAVE = 2.0` sufficient on MDF (labeled Conjecture),
 do the walls come off smooth enough, and the standing prediction of **no visible
-scar at C1**. Nothing has been cut since 2026-03-25.
+scar at C1**. Nothing has been cut since 2026-03-25. The virtual cut (§2)
+narrows this list but does not shorten it: it rules out the two failures most
+worth fearing on a first cut after five months — a rogue arc, and walls in the
+wrong place — and speaks to none of the material questions.
 
-**H. Deferred** — repo visibility, skills triage.
+**I. Deferred** — repo visibility, skills triage.
 
 ---
 
-## 4. Traps — carried forward, plus one earned this session
+## 5. Traps — carried forward, plus one earned this session
 
 The morning handoff's list all still applies. Read it. Added:
 

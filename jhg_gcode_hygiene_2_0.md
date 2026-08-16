@@ -23,8 +23,13 @@ Plunge:       500 mm/min (default)
 Safe Z:       12mm
 Park Z:       50mm
 Bit 1:        1/4" upcut spiral — BIT_R = 3.175mm
+              SPWS2LX6.22 — 6.35 dia x 22 LOC x 50 OAL x 6.35 shank, 2-flute
 Bit 2:        1/8" upcut spiral — BIT_R = 1.5875mm
 ```
+
+*Bit 1 identified from the tool case 2026-08-15. The **22mm flute length** is the one number with a constraint in it: it clears `DEPTH_TOTAL` 16.0mm with 6mm to spare, so full-depth body cuts are within the cutter's flutes and not riding the shank. **The case does not state up-cut vs down-cut** — "upcut" here is Jason's attestation, not read off the label. Do not "correct" it from the photo.*
+
+**No tool-change command is issued in any NC, deliberately.** There is no changer; the machine cuts with whatever is in the spindle. The header names the intended tool so a reader knows what to load. A simulator will warn that no tool was selected and fall back to tool 1 — which is the correct tool, so the warning is cosmetic. `T1 M6` was measured to silence it and produce an identical surface, but **it has never been sent to the DLC32**, and this is a machine that fails silently on parentheses in SD-card execution. Unsupported-command behaviour there is unverified, so nothing is emitted. See the tool-select note in the current handoff.
 
 ---
 
